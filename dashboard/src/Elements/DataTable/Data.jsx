@@ -1,0 +1,92 @@
+export const data = [
+    {
+        id: "pmt001",
+        amount: 316,
+        status: "success",
+        email: "ken99@example.com",
+    },
+    {
+        id: "pmt002",
+        amount: 242,
+        status: "success",
+        email: "abe45@example.com",
+    },
+    {
+        id: "pmt003",
+        amount: 837,
+        status: "processing",
+        email: "monserrat44@example.com",
+    },
+    {
+        id: "pmt004",
+        amount: 874,
+        status: "success",
+        email: "silas22@example.com",
+    },
+    {
+        id: "pmt005",
+        amount: 721,
+        status: "failed",
+        email: "carmella@example.com",
+    },
+    {
+        id: "pmt006",
+        amount: 134,
+        status: "pending",
+        email: "leah.jones@example.com",
+    },
+    {
+        id: "pmt007",
+        amount: 659,
+        status: "success",
+        email: "derek.smith@example.com",
+    },
+    {
+        id: "pmt008",
+        amount: 490,
+        status: "processing",
+        email: "marcus.b@example.com",
+    },
+    {
+        id: "pmt009",
+        amount: 275,
+        status: "success",
+        email: "tina.chen@example.com",
+    },
+    {
+        id: "pmt010",
+        amount: 993,
+        status: "failed",
+        email: "liam.adams@example.com",
+    },
+    {
+        id: "pmt011",
+        amount: 564,
+        status: "pending",
+        email: "emma.wood@example.com",
+    },
+    {
+        id: "pmt012",
+        amount: 381,
+        status: "success",
+        email: "noah.green@example.com",
+    },
+    {
+        id: "pmt013",
+        amount: 729,
+        status: "processing",
+        email: "ava.lee@example.com",
+    },
+    {
+        id: "pmt014",
+        amount: 645,
+        status: "failed",
+        email: "ethan.taylor@example.com",
+    },
+    {
+        id: "pmt015",
+        amount: 812,
+        status: "success",
+        email: "mia.hall@example.com",
+    },
+]

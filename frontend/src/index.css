@@ -1,0 +1,172 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import "tailwindcss";
+
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+    /* === Base Backgrounds === */
+    --bg-base: #000000; /* Dark base background */
+    --bg-surface: #ffffff; /* Light surface background */
+
+    /* === Brand Colors === */
+    --color-primary: #ffffff; /* Main brand color (also text) */
+    --color-accent: #363738; /* Accent variant of primary */
+
+    /* === Neutral UI Backgrounds === */
+    --bg-neutral: #f5f5f5; /* Secondary soft background */
+    --bg-neutral-light: #fefaf1; /* Very light background surface */
+
+    /* === Text Colors === */
+    --text-muted-dark: #2F2E30;
+    --text-primary: #fafafa; /* Default light text */
+    --text-light-muted: #808080;
+    --text-muted: #7d8184; /* Muted/secondary text */
+    --text-dark: #000000; /* Strong dark text */
+    --text-danger: #db4444; /* Error or warning text */
+    --text-yellow: #FFAD33;
+
+    /* === Button Colors === */
+    --btn-success: #00ff66; /* Success/positive action */
+    --btn-danger: #db4444; /* Danger/negative action */
+
+    /* === Hover/State Colors === */
+    --hover-warning: #e07575; /* Hover state for warning */
+    --hover-info: #a0bce0; /* Hover state for informational items */
+}
+
+
+/* Font Styles */
+
+
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+
+/* === Text Colors === */
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-light-muted {
+    color: var(--text-light-muted);
+}
+
+.text-muted-dark {
+    color: var(--text-muted-dark);
+}
+
+.text-dark {
+    color: var(--text-dark);
+}
+
+.text-error {
+    color: var(--text-danger);
+}
+
+.text-white {
+    color: var(--color-primary);
+}
+
+.text-accent {
+    color: var(--color-accent);
+}
+
+.text-success {
+    color: var(--btn-success);
+}
+
+.text-danger {
+    color: var(--btn-danger);
+}
+
+.text-hover-warn {
+    color: var(--hover-warning);
+}
+
+.text-hover-info {
+    color: var(--hover-info);
+}
+
+.text-yellow {
+    color: var(--text-yellow);
+}
+
+
+/* === Background Colors === */
+.bg-white {
+    background-color: var(--color-primary);
+}
+
+.bg-accent {
+    background-color: var(--color-accent);
+}
+
+.bg-base {
+    background-color: var(--bg-base);
+}
+
+.bg-surface {
+    background-color: var(--bg-surface);
+}
+
+.bg-light {
+    background-color: var(--bg-neutral);
+}
+
+.bg-cream {
+    background-color: var(--bg-neutral-light);
+}
+
+.bg-muted {
+    background-color: var(--text-muted);
+}
+
+.bg-light-muted {
+    background-color: var(--text-light-muted);
+}
+
+.bg-muted-dark {
+    background-color: var(--text-muted-dark);
+}
+
+.bg-dark {
+    background-color: var(--text-dark);
+}
+
+.bg-error {
+    background-color: var(--text-danger);
+}
+
+.bg-success {
+    background-color: var(--btn-success);
+}
+
+.bg-danger {
+    background-color: var(--btn-danger);
+}
+
+.bg-hover-warn {
+    background-color: var(--hover-warning);
+}
+
+.bg-hover-info {
+    background-color: var(--hover-info);
+}
+
+.bg-yellow {
+    background-color: var(--text-yellow);
+}
+
+.custom-scrollbar-hide::-webkit-scrollbar {
+    display: none; /* This hides the scrollbar track and thumb */
+    width: 0;      /* Ensure no width is taken by the scrollbar */
+    height: 0;     /* Ensure no height is taken by the scrollbar */
+}
