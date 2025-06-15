@@ -16,6 +16,13 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 
+// Routes
+import {router as userRouter} from './routes/user.routes.js';
+
+// Routes Declaration
+app.use("/api/v1/users", userRouter);
+
+
 const upload = multer();
 
 
