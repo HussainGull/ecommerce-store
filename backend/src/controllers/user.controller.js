@@ -28,8 +28,8 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
     const {fullName, email, password} = req.body;
 
-    if ([fullName, email, password].some((field) => field?.trim === "")) {
-        throw new ApiError(400, 'All fields are required');
+    if ([fullName, email, password].some((field) => !field || field.trim() === "")) {
+        throw new ApiError(400, "All fields are required");
     }
 
     const existedUser = await User.findOne({email})
@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'Please Register First!');
     }
 
-    const isPasswordValid = await User.isPasswordCorrect(password);
+    const isPasswordValid = await user.isPasswordCorrect(password);
 
     if (!isPasswordValid) {
         throw new ApiError(401, 'Password Invalid!');
@@ -78,7 +78,8 @@ const loginUser = asyncHandler(async (req, res) => {
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
     const options = {
-        httpOnly: true, secure: true
+        httpOnly: true,
+        secure : true
     };
 
     return res.status(200)
@@ -188,11 +189,20 @@ const updatePassword = asyncHandler(async (req, res) => {
 
 // Get Current User
 const getCurrentUser = asyncHandler(async (req, res) => {
+    if (!req.user || !req.user._id) {
+        throw new ApiError(401, "Unauthorized. User not found.");
+    }
+
+    const user = await User.findById(req.user._id).select("-password -refreshToken");
+    if (!user) {
+        throw new ApiError(404, "User not found.");
+    }
+
     return res
         .status(200)
-        .json(new ApiResponse(200, req.user, "User Fetched Successfully !"))
-
+        .json(new ApiResponse(200, user, "User fetched successfully."));
 });
+
 
 // Update User Account Details
 const updateAccountDetails = asyncHandler(async (req, res) => {
