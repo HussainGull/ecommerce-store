@@ -18,7 +18,7 @@ export default function SignUpPage() {
             {/* Right Section: Form - now takes 40% width on large screens */}
             {/* The w-[40%] you had was a fixed pixel-based width, not percentage for lg: */}
             <div className="w-full lg:w-2/5 h-full flex items-center justify-center p-6">
-                <SignUpForm /> {/* Your SignUpForm component will render here */}
+                <SignUpForm onSubmit={() => console.log("User submitted")}/> {/* Your SignUpForm component will render here */}
             </div>
         </div>
     );

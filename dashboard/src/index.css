@@ -130,6 +130,7 @@
     --color-dark-gray: #232321;
     --color-light-gray: #F5F5F5;
     --color-yellow: #FFA52F;
+    --color-red: #ff5556;
 }
 
 /* Font Utility */
@@ -148,6 +149,10 @@
 
 .bg-light {
     background-color: var(--color-primary-light);
+}
+
+.bg-red {
+    background-color: var(--color-red);
 }
 
 .bg-blue {
@@ -181,6 +186,10 @@
 
 .text-light {
     color: var(--color-primary-light);
+}
+
+.text-red {
+    color: var(--color-red);
 }
 
 .text-blue {
