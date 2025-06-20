@@ -1,6 +1,6 @@
-import ProductInfo from "@/Elements/ProductInfo/ProductInfo.jsx";
 import Heading from "@/Elements/Heading/Heading.jsx";
 import RoutePathDisplay from "@/Elements/RoutePathDisplay/RouthPathDisplay.jsx";
+import ProductForm from "@/Elements/Form/Product/ProductForm.jsx";
 
 export default function AddNewProducts() {
     return (
@@ -12,7 +12,7 @@ export default function AddNewProducts() {
                 />
                 <RoutePathDisplay/>
             </div>
-            <ProductInfo/>
+            <ProductForm/>
         </div>
     )
 }

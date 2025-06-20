@@ -1,101 +1,143 @@
-import React, {useState} from "react";
+import React, {useEffect} from "react";
 import {BlueButton} from "@/Elements/Buttons/BlueButton.jsx";
 import InputField from "@/Elements/InputField/InputField.jsx";
+import {LinkButton} from "@/Elements/LinkButton/LinkButton.jsx";
+import {formFields} from "@/Elements/Form/Login/FormFields.js";
+import {useForm} from "react-hook-form";
+import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
+import {login} from "@/Features/Users/Auth/authSlice.js";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 export default function LoginForm() {
+    // const user = useSelector(state => state.auth.user)
+    // const token = useSelector(state => state.auth.accessToken)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        keepLoggedIn: false,
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: {errors},
+    } = useForm({
+        defaultValues: {
+            email: '',
+            password: '',
+        },
     });
 
-    const formFields = [
-        {
-            type: "text",
-            name: "Email",
-            placeholder: "Email",
-            required: true,
-        },
-        {
-            type: "text",
-            name: "Password",
-            placeholder: "Password",
-            required: true,
-        },
-        {
-            type: "checkbox",
-            name: "keepLoggedIn",
-            label: "Keep me logged in",
-        },
-    ];
+    // useEffect(() => {
+    //     console.log("Redux Auth:", { user, token });
+    // }, [user, token]);
 
 
-    const handleChange = (e) => {
-        const {name, value, type, checked} = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
+
+    const onSubmit = async (data) => {
+        try {
+            // console.log("Submitted data:", data); // ✅ Step 1: Log form input
+
+            const res = await axiosClient.post("/users/login", data);
+
+            // console.log("Login response:", res); // ✅ Step 2: Log full server response
+
+            showToast({
+                title: "✅ Hey Buddy!",
+                description: "Good To See You!",
+            });
+
+            const token = res.data?.accessToken;
+            const user = res.data?.user;
+
+            // console.log("Token received:", token);
+            // console.log("User received:", user);
+
+            if (token && user) {
+                dispatch(login({ user, accessToken: token }));
+                // console.log("Dispatched login to Redux");
+
+                setTimeout(() => {
+                    // console.log("⏳ Navigating to /dashboard...");
+                    navigate("/dashboard");
+                }, 3000);
+            } else {
+                // console.warn("No token or user found in response.");
+            }
+
+            reset();
+
+        } catch (error) {
+            const status = error.response?.status;
+            const msg = error.response?.data?.message || error.message;
+
+            // console.error("Login error status:", status);
+            // console.error("Login error message:", msg);
+
+            if (status === 400) {
+                showToast({
+                    title: "❌ Invalid Email Format",
+                    description: "Don't mess with the format.",
+                });
+            } else if (status === 404) {
+                showToast({
+                    title: "❌ Email Does Not Exist!",
+                    description: "Try Signing-Up instead.",
+                });
+            } else if (status === 401) {
+                showToast({
+                    title: "❌ Invalid Password",
+                    description: msg,
+                });
+            } else {
+                showToast({
+                    title: "❌ Login Failed",
+                    description: msg,
+                });
+            }
+        }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Registration data:', formData);
-        alert('Registration attempted! Check console for data.');
-        // In a real application, you'd send this data to your backend
-    };
 
     return (
         <div className="w-full p-4 sm:p-12 md:p-6 flex flex-col justify-center gap-3">
-            <h1 className="font-poppins text-4xl font-poppins font-semibold mb-4">Log In</h1>
-            <p className={"font-poppins text-base text-gray-600 mb-6"}>Forgot Your Password ?</p>
+            <h1 className="font-poppins text-4xl font-semibold mb-4">Log In</h1>
+            <p className="font-poppins text-base text-gray-600 mb-6">Forgot Your Password ?</p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                {formFields.map((field) => {
-                    if (field.type === "checkbox") {
-                        return (
-                            <div key={field.name} className="flex items-center mt-2">
-                                <input
-                                    type="checkbox"
-                                    id={field.name}
-                                    name={field.name}
-                                    checked={formData[field.name]}
-                                    onChange={handleChange}
-                                    className="h-4 w-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
-                                />
-                                <label
-                                    htmlFor={field.name}
-                                    className="font-poppins ml-2 text-sm text-dark"
-                                >
-                                    {field.label}
-                                </label>
-                            </div>
-                        );
-                    }
-                    return (
-                        <div key={field.name}>
-                            <InputField
-                                type={field.type}
-                                name={field.name}
-                                value={formData[field.name]}
-                                onChange={handleChange}
-                                placeholder={field.placeholder}
-                                required={field.required}
-                            />
-                            {field.note && (
-                                <p className="font-poppins text-gray-500 text-xs mt-2">{field.note}</p>
-                            )}
-                        </div>
-                    );
-                })}
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+                {formFields.map((field) => (
+                    <div key={field.name}>
+                        <InputField
+                            type={field.type}
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            required={field.required}
+                            {...register(field.name, {
+                                required: field.required,
+                                pattern: field.pattern ? {
+                                    value: field.pattern,
+                                    message: "Invalid format",
+                                } : undefined,
+                            })}
+                        />
+                        {errors[field.name] && (
+                            <p className="font-poppins text-red text-sm mt-1">
+                                {errors[field.name].message || `${field.placeholder} is required`}
+                            </p>
+                        )}
+                        {field.note && (
+                            <p className="font-poppins text-light-muted text-xs mt-2">{field.note}</p>
+                        )}
+                    </div>
+                ))}
 
-                {/* Submit Button */}
-                <BlueButton
-                    type={'submit'}
-                    text={'Login'}
-                />
+                <div className="flex items-end gap-2">
+                    <span className="font-poppins text-sm">Newbie? Register First!</span>
+                    <LinkButton to="/sign-up" title="Sign-Up"/>
+                </div>
+
+                <BlueButton type="submit" text="Login"/>
             </form>
         </div>
-    )
+    );
 }

@@ -5,6 +5,7 @@ import {ApiResponse} from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
 
+
 // Generating Access & Refresh Tokens
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -22,35 +23,52 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 };
 
-
 // Register User
 
 const registerUser = asyncHandler(async (req, res) => {
-    const {fullName, email, password} = req.body;
+    const { fullName, email, password } = req.body;
 
+    // Basic field presence validation
     if ([fullName, email, password].some((field) => !field || field.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
 
-    const existedUser = await User.findOne({email})
-
-    if (existedUser) {
-        throw new ApiError(409, 'User already exists');
+    // Email format validation using regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        throw new ApiError(400, "Invalid email format");
     }
 
-    const user = await User.create({
-        fullName, email, password
-    })
+    // Check if user already exists
+    const existedUser = await User.findOne({ email });
+    if (existedUser) {
+        throw new ApiError(409, "User already exists");
+    }
+
+    // Create user
+    const user = await User.create({ fullName, email, password });
+
+    // Generate tokens
+    const { accessToken } = await generateAccessAndRefreshToken(user._id);
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
-
     if (!createdUser) {
-        throw new ApiError(500, 'Error Via Registering User');
+        throw new ApiError(500, "Error while registering user");
     }
 
-    return res.status(201).json(new ApiResponse(200, createdUser, "User Registered Successfully !"));
-
+    // Success response
+    return res.status(201).json(
+        new ApiResponse(
+            201,
+            {
+                user:createdUser,
+                accessToken, // send in body for localStorage
+            },
+            "User Registered Successfully!"
+        )
+    );
 });
+
 
 // Login User
 
@@ -58,7 +76,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const {email, password} = req.body;
 
     if (!email) {
-        throw new ApiError(404, 'Email is required');
+        throw new ApiError(400, 'Email is required');
     }
 
     const user = await User.findOne({email});
@@ -79,14 +97,13 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure : true
+        secure: process.env.NODE_ENV
     };
 
     return res.status(200)
-        .cookie('accessToken', accessToken, options)
         .cookie('refreshToken', refreshToken, options)
         .json({
-            status: 200, user: loggedInUser, accessToken, refreshToken, message: "User Logged Successfully!"
+            status: 200, user: loggedInUser, accessToken, message: "User Logged Successfully!"
         });
 
 });

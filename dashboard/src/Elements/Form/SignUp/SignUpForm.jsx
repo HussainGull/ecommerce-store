@@ -1,12 +1,23 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {BlueButton} from "@/Elements/Buttons/BlueButton.jsx";
 import InputField from "@/Elements/InputField/InputField.jsx";
-import {formFields} from "@/Elements/Form/SignUp/FormField.js";
-import axios from "axios";
+import {formFields} from "@/Elements/Form/SignUp/FormFields.js";
+import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
+import {LinkButton} from "@/Elements/LinkButton/LinkButton.jsx";
+import {useDispatch, useSelector} from "react-redux";
+import {login} from "@/Features/Users/Auth/authSlice.js";
+import {useNavigate} from "react-router-dom";
+
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState({});
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    // const user = useSelector(state => state.auth.user)
+    // const token = useSelector(state => state.auth.accessToken)
+    // const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
 
     const {
         register,
@@ -19,26 +30,70 @@ export default function SignUpForm() {
             lastName: "",
             email: "",
             password: "",
-            agreeToTerms: false,
-            keepLoggedIn: false,
         },
     });
 
+    // useEffect(() => {
+    //     console.log("User: ", user)
+    //     console.log("AccessToken: ", token)
+    //     console.log("Is Authenticated: ", isAuthenticated)
+    // }, [user, isAuthenticated, token]);
+
+
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post("/api/v1/users/register-user", data);
+            const payload = {
+                fullName: `${data.firstName} ${data.lastName}`,
+                email: data.email,
+                password: data.password,
+            };
 
-            // ✅ Handle successful registration
-            console.log("Success:", response.data);
-            alert("✅ Registration successful!");
-            reset(); // clear form
+            const res = await axiosClient.post("/users/register-user", payload);
+            // console.log(res)
+
+            showToast({
+                title: "✅ Registration successful!",
+                description: "Welcome aboard!",
+            });
+
+            const token = res?.data?.data?.accessToken;
+            const user = res?.data?.data?.user;
+
+            if (token && user) {
+                dispatch(login({user, accessToken: token}));
+
+                setTimeout(() => {
+                    navigate("/dashboard");
+                }, 3000);
+            }
+
+            reset(); // Clear form
 
         } catch (error) {
-            // ❌ Handle error
-            console.error("Registration error:", error.response?.data || error.message);
-            alert(`❌ Error: ${error.response?.data?.message || "Registration failed."}`);
+            const status = error.response?.status;
+            const msg = error.response?.data?.message || error.message;
+
+            if (status === 400) {
+                showToast({
+                    title: "❌ Invalid Email Format",
+                    description: "Don't mess with the format.",
+                });
+            } else if (status === 409) {
+                showToast({
+                    title: "❌ Email already registered",
+                    description: "Try logging in instead.",
+                });
+            } else {
+                showToast({
+                    title: "❌ Registration failed",
+                    description: msg,
+                });
+            }
+
+            // console.error("Register error:", error);
         }
     };
+
 
     return (
         <div className="w-full p-4 sm:p-12 md:p-6 flex flex-col justify-center">
@@ -54,34 +109,6 @@ export default function SignUpForm() {
                             >
                                 {field.heading}
                             </p>
-                        );
-                    }
-
-                    if (field.type === "checkbox") {
-                        return (
-                            <div key={field.name} className="flex items-center mt-2">
-                                <input
-                                    type="checkbox"
-                                    id={field.name}
-                                    {...register(field.name, {
-                                        required: field.required
-                                            ? `${field.label || "This field"} is required.`
-                                            : false,
-                                    })}
-                                    className="h-4 w-4 text-blue bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
-                                />
-                                <label
-                                    htmlFor={field.name}
-                                    className="font-poppins ml-2 text-sm text-dark"
-                                >
-                                    {field.label}
-                                </label>
-                                {errors[field.name] && (
-                                    <span className="text-red text-xs ml-2">
-                                        {errors[field.name].message}
-                                    </span>
-                                )}
-                            </div>
                         );
                     }
 
@@ -146,7 +173,12 @@ export default function SignUpForm() {
                         );
                     }
                 })}
-
+                <div className={"flex items-end gap-2"}>
+                    <span className={"font-poppins text-sm"}>Already have an Account !</span>
+                    <LinkButton
+                        to={"/login"}
+                        title={"Log In"}/>
+                </div>
                 <BlueButton type="submit" text="Register"/>
             </form>
         </div>

@@ -8,14 +8,15 @@ import {
     updatePassword, getCurrentUser, updateAccountDetails
 } from "../controllers/user.controller.js";
 import {verifyJWT} from "../middlewares/auth.middleware.js";
+import {upload} from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
-router.route('/register-user').post(registerUser);               // ✅ create
+router.route('/register-user').post(registerUser);
 router.route('/login').post(loginUser);                          // ✅ login action
 
 // Secured Routes
-router.route('/logout').post(verifyJWT, logoutUser);             // ✅ destructive action
+router.route('/logout').delete(verifyJWT, logoutUser);             // ✅ destructive action
 router.route('/refresh-token').post(refreshAccessToken);         // ✅ token exchange
 
 router.route('/update-password').patch(verifyJWT, updatePassword);          // 🟢 PATCH = partial update

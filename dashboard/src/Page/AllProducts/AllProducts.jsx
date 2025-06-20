@@ -2,6 +2,9 @@ import AddProductButton from "@/Elements/Buttons/AddProductButton.jsx";
 import ProductSummaryCard from "@/Elements/Card/Products/ProductSummaryCard.jsx";
 import Heading from "@/Elements/Heading/Heading.jsx";
 import RoutePathDisplay from "@/Elements/RoutePathDisplay/RouthPathDisplay.jsx";
+import { Link } from 'react-router-dom';
+import {CirclePlus} from "lucide-react";
+import React from "react";
 
 export default function AllProducts() {
     const nikeArticles = [
@@ -109,10 +112,14 @@ export default function AllProducts() {
                 </div>
 
                 {/* Add your product management components here */}
-                <AddProductButton
-                    text={'Add New Product'}
-                    className={'w-[220px] h-[50px]'}
-                />
+
+                <Link
+                    to="/add-new-product"
+                    className="w-[220px] h-[50px] gap-3 bg-dark text-white font-semibold flex items-center justify-center rounded-lg hover:bg-brown transition-colors duration-200"
+                >
+                    <CirclePlus/> Add New Product
+                </Link>
+
             </div>
 
             <div

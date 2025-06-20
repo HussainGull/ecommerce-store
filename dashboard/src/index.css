@@ -229,6 +229,10 @@
     background-color: var(--color-primary-blue);
 }
 
+.hover-bg-red:hover {
+    background-color: var(--color-red);
+}
+
 .hover-bg-light-gray:hover {
     background-color: var(--color-light-gray);
 }
@@ -249,6 +253,10 @@
 
 .hover-text-accent:hover {
     color: var(--color-primary-accent);
+}
+
+.hover-text-red:hover {
+    color: var(--color-red);
 }
 
 .hover-text-light:hover {

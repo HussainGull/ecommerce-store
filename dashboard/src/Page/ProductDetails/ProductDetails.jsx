@@ -1,4 +1,3 @@
-import ProductInfo from "@/Elements/ProductInfo/ProductInfo.jsx";
 import Heading from "@/Elements/Heading/Heading.jsx";
 import RoutePathDisplay from "@/Elements/RoutePathDisplay/RouthPathDisplay.jsx";
 

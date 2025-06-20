@@ -1,36 +1,46 @@
+// src/utils/axiosClient.js
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 import axios from "axios";
 
-// ✅ Create Axios instance
 const axiosClient = axios.create({
-    baseURL: "/api/v1", // OR full URL like "http://localhost:5000/api/v1"
+    baseURL: "http://localhost:8000/api/v1", // or full backend URL like "http://localhost:5000/api/v1"
+    withCredentials: true, // 🔐 Required to send cookies with requests
     headers: {
         "Content-Type": "application/json",
     },
-    withCredentials: false, // Set to true if you’re using cookies/session
 });
 
-// ✅ Automatically add JWT token to every request
-axiosClient.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
 
-// ❌ Handle errors globally (optional)
 axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            console.warn("Unauthorized. Token may be expired.");
-            // Redirect to login, or refresh token logic can go here
+        const status = error.response?.status;
+        const requestUrl = error.config?.url;
+
+        // Only redirect if NOT login request
+        if (status === 401 && !requestUrl.includes("/login")) {
+            showToast({
+                title: "🔐 Session expired",
+                description: "Please log in again.",
+            });
+
+            localStorage.removeItem("accessToken");
+            window.location.href = "/login";
         }
+
         return Promise.reject(error);
     }
 );
+
+
+
+axiosClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 
 export default axiosClient;

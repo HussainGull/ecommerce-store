@@ -18,6 +18,10 @@ export const formFields = [
         name: "email",
         placeholder: "Email",
         required: "Email is required",
+        pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Please enter a valid email address",
+        },
     },
     {
         type: "password",
@@ -33,16 +37,5 @@ export const formFields = [
         },
         note:
             "Minimum 8 characters with at least one uppercase, one lowercase, one special character and a number.",
-    },
-    {
-        type: "checkbox",
-        name: "agreeToTerms",
-        label: 'By clicking "Register" you agree to our terms.',
-        required: "You must agree to the terms.",
-    },
-    {
-        type: "checkbox",
-        name: "keepLoggedIn",
-        label: "Keep me logged in",
     },
 ];
