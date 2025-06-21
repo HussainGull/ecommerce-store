@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress"
 
 export default function ProgressBar({ value }) {
     const [progress, setProgress] = React.useState(0)
-    const MAX = 500
+    const MAX = 200
 
     React.useEffect(() => {
         const timeout = setTimeout(() => {

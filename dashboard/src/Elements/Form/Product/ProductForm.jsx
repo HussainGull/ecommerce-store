@@ -1,29 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import InputField from "@/Elements/InputField/InputField.jsx";
 import FormLabel from "@/Elements/Label/FormLabel.jsx";
 import TextArea from "@/Elements/TextArea/TextArea.jsx";
 import {Selector} from "@/Elements/Select/Selector.jsx";
 import {Controller, useForm} from 'react-hook-form';
 import {Eye, X} from 'lucide-react';
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
+import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
+import ImageDropzone from "@/Elements/DropZone/ImageDropzone.jsx";
 
-export default function ProductForm() {
+export default function ProductForm({isDeleteEnable}) {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [desiredPreviewIndex, setDesiredPreviewIndex] = useState(0);
+
 
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: {errors, isSubmitting},
         control,
         reset,
         setValue,
-        watch
+        watch,
     } = useForm({
         defaultValues: {
             productName: '',
             description: '',
             category: '',
-            brandName: '',
+            brand: '',
             sku: '',
             stockQuantity: '',
             regularPrice: '',
@@ -33,42 +37,17 @@ export default function ProductForm() {
         },
     });
 
-    const fruitOptions = [
-        {value: "apple", label: "Apple"},
-        {value: "banana", label: "Banana"},
-        {value: "blueberry", label: "Blueberry"},
-        {value: "grapes", label: "Grapes"},
-        {value: "pineapple", label: "Pineapple"},
+    const brand = [
+        {value: "nike", label: "Nike"},
+        {value: "adidas", label: "Adidas"},
+        {value: "puma", label: "Puma"},
+        {value: "armour", label: "Armour"},
     ];
-
-    const handleImageChange = (e) => {
-        const newFiles = Array.from(e.target.files);
-        const existingFiles = watch("productImages") || [];
-
-        // 🔍 Filter out duplicates by name and size
-        const uniqueFiles = newFiles.filter((newFile) => {
-            return !existingFiles.some((existingFile) => existingFile.name === newFile.name && existingFile.size === newFile.size);
-        });
-
-        // If no unique files, exit early
-        if (uniqueFiles.length === 0) return;
-
-        // 🖼️ Generate previews for new unique files
-        const newPreviews = uniqueFiles.map((file) => URL.createObjectURL(file));
-
-        // ✅ Append previews
-        setImagePreviews((prev) => [...prev, ...newPreviews]);
-
-        // ✅ Update react-hook-form field
-        setValue("productImages", [...existingFiles, ...uniqueFiles], {
-            shouldValidate: true,
-        });
-
-        // Reset file input to allow re-selection of the same file later
-        e.target.value = null;
-
-    };
-
+    const category = [
+        {value: "cleats", label: "Cleats"},
+        {value: "grippers", label: "Grippers"},
+        {value: "laceless", label: "Laceless"},
+    ];
 
     const removeImage = (index) => {
         const newPreviews = imagePreviews.filter((_, i) => i !== index);
@@ -84,36 +63,64 @@ export default function ProductForm() {
     };
 
     const onSubmit = async (data) => {
-        console.log(data)
-        // try {
-        //     const formData = new FormData();
-        //
-        //     Object.entries(data).forEach(([key, value]) => {
-        //         if (key === 'productImages') {
-        //             value.forEach(file => formData.append('productImage', file));
-        //         } else {
-        //             formData.append(key, value);
-        //         }
-        //     });
-        //
-        //     const res = await axiosClient.post('/product/add-product', formData, {
-        //         headers: { 'Content-Type': 'multipart/form-data' },
-        //     });
-        //
-        //     showToast({
-        //         title: "✅ Product Added!",
-        //         description: "Product is added successfully!",
-        //     });
-        //
-        //     console.log(res)
-        //     reset();
-        //     setImagePreviews([]);
-        //
-        // } catch (error) {
-        //     const status = error.response?.status;
-        //     const message = error.response?.data?.message || error.message;
-        //     showToast({ title: status, description: message });
-        // }
+        const formData = new FormData();
+
+        try {
+            // Append form data
+            Object.entries(data).forEach(([key, value]) => {
+                if (key === 'productImages') {
+                    value.forEach(file => formData.append('productImage', file)); // 🔁 append all images
+                } else if (Array.isArray(value)) {
+                    formData.append(key, value.join(',')); // 📋 serialize arrays
+                } else {
+                    formData.append(key, value); // 🧾 append scalar values
+                }
+            });
+
+            const response = await axiosClient.post('/product/add-product', formData, {
+                headers: {'Content-Type': 'multipart/form-data'},
+            });
+
+            showToast({
+                title: response.statusText,
+                description: response.data?.message,
+            });
+
+            // console.log("Response:", response);
+            reset();              // 🔄 Reset form
+            setImagePreviews([]); // 🧹 Clear previews
+
+        } catch (error) {
+            const status = error?.response?.status || error?.status || "Error";
+            const message =
+                error?.response?.data?.message ||  // From backend
+                error?.message ||                 // From JS/Axios
+                "Something went wrong.";          // Fallback
+
+            let toastTitle = `❌ ${status}`;
+            let toastDescription = message;
+
+            // 👇 Optional: More tailored handling based on status code
+            switch (status) {
+                case 400:
+                    toastTitle = "🛑 Please fill all fields";
+                    break;
+                case 408:
+                    toastTitle = "⏳ Missing Images";
+                    toastDescription = "Product images are required.";
+                    break;
+                case 500:
+                    toastTitle = "🚨 Server Error";
+                    break;
+            }
+
+            showToast({
+                title: toastTitle,
+                description: toastDescription,
+            });
+
+            console.error("Error submitting product:", error);
+        }
     };
 
     return (
@@ -143,21 +150,21 @@ export default function ProductForm() {
                             placeholder={"Category"}
                             rules={{required: 'Category is required'}}
                             render={({field}) => <Selector placeholder={'Choose Category'} label="Choose Category"
-                                                           items={fruitOptions} {...field} />}
+                                                           items={category} {...field} />}
                         />
                         {errors.category && <p className="text-red-600 text-xs">{errors.category.message}</p>}
                     </div>
 
                     <div>
-                        <FormLabel htmlFor="brandName">Brand</FormLabel>
+                        <FormLabel htmlFor="brand">Brand</FormLabel>
                         <Controller
-                            name="brandName"
+                            name="brand"
                             control={control}
                             rules={{required: 'Brand Name is required'}}
                             render={({field}) => <Selector placeholder={'Choose Brand'} label="Choose Brand"
-                                                           items={fruitOptions} {...field} />}
+                                                           items={brand} {...field} />}
                         />
-                        {errors.brandName && <p className="text-red-600 text-xs">{errors.brandName.message}</p>}
+                        {errors.brand && <p className="text-red-600 text-xs">{errors.brand.message}</p>}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -220,29 +227,12 @@ export default function ProductForm() {
                         )}
                     </div>
 
-                    <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center relative">
-                        <input
-                            id="productImages"
-                            type="file"
-                            accept="image/png, image/jpeg"
-                            multiple
-                            onChange={handleImageChange}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
-                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
-                             viewBox="0 0 48 48">
-                            <path
-                                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <p className="mt-2 text-sm text-dark-gray">Drop your image here or
-                            <label htmlFor="productImages"
-                                   className="ml-2 mt-3 inline-block text-sm font-medium  cursor-pointer rounded-md ">
-                                Browse Files
-                            </label>
-                        </p>
-                        <p className="mt-2 text-xs text-dark-gray">jpeg, png are allowed</p>
-                    </div>
+                    <ImageDropzone
+                        setValue={setValue}
+                        watch={watch}
+                        setImagePreviews={setImagePreviews}
+                    />
+
 
                     {/* Preview Images */}
                     <div className="max-h-[270px] overflow-y-auto space-y-4">
@@ -269,21 +259,29 @@ export default function ProductForm() {
                         ))}
                     </div>
 
-                </div>
-            </form>
+                    {/* Buttons */}
+                    <div className="mt-70 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`px-4 py-2 text-white rounded-md transition
+                            ${isSubmitting ? "bg-gray-400" : "bg-blue hover:bg-blue-700"}`}
+                        >
+                            {isSubmitting ? "Submitting" : "Add Product"}
+                        </button>
+                        {isDeleteEnable && (
+                            <button type="button"
+                                    className="w-full sm:w-auto px-6 py-2 text-red-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-md">DELETE
+                            </button>
+                        )}
+                        <button type="button" onClick={() => reset()}
+                                className="w-full sm:w-auto px-6 py-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-md">CANCEL
+                        </button>
+                    </div>
 
-            {/* Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
-                <button type="submit" onClick={handleSubmit(onSubmit)}
-                        className="w-full sm:w-auto px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md">UPDATE
-                </button>
-                <button type="button"
-                        className="w-full sm:w-auto px-6 py-2 text-red-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-md">DELETE
-                </button>
-                <button type="button" onClick={() => reset()}
-                        className="w-full sm:w-auto px-6 py-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-md">CANCEL
-                </button>
-            </div>
+                </div>
+
+            </form>
         </div>
     );
 }

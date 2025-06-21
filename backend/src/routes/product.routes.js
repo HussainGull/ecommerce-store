@@ -1,7 +1,7 @@
 import {Router} from "express";
 
 import {
-    addProduct,
+    addProduct, getAllProducts,
 } from "../controllers/product.controller.js";
 import {upload} from "../middlewares/multer.middleware.js";
 
@@ -15,6 +15,8 @@ productRouter.route('/add-product').post(upload.fields([
     ]),
     addProduct
 );
+
+productRouter.route('/get-all-products').get(getAllProducts)
 
 
 export {productRouter}

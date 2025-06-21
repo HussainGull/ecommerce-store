@@ -70,7 +70,9 @@ export const addProduct = asyncHandler(async (req, res) => {
         ? req.files.productImage.filter(file => file?.path).map(file => file.path) : [];
 
     if (productImagePaths.length === 0) {
-        throw new ApiError(400, "Product images are required");
+        res.status(408)
+            .message = 'fuck you'
+        throw new ApiError(408, "Product images are required");
     }
 
     const uploadedProductImages = await Promise.all(
@@ -101,4 +103,16 @@ export const addProduct = asyncHandler(async (req, res) => {
 });
 
 
+
+export const getAllProducts = asyncHandler(async (req, res) => {
+    try {
+        const allProducts = await Product.find().sort({ createdAt: -1 });
+
+        return res.status(200).json(
+            new ApiResponse(200, allProducts, "Products fetched successfully!")
+        );
+    } catch (e) {
+        throw new ApiError(500, `Failed to fetch products: ${e.message}`);
+    }
+});
 

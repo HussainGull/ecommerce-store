@@ -12,7 +12,9 @@ export default function AddNewProducts() {
                 />
                 <RoutePathDisplay/>
             </div>
-            <ProductForm/>
+            <ProductForm
+            isDeleteEnable={false}
+            />
         </div>
     )
 }
