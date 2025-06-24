@@ -8,50 +8,37 @@ import {MoreHorizontal, Trash2, Eye, Pencil} from "lucide-react";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {DeleteAlert} from "@/Elements/Alert/DeleteAlert.jsx";
-import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
+import {useDispatch} from 'react-redux';
+import {deleteProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
+
 
 export default function Dropdown({productId}) {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
 
 
-    const deleteProduct = async (productId) => {
-        try {
-            const response = await axiosClient.delete('/product/delete-product', {
-                data: {id: productId}, // 👈 DELETE needs 'data' wrapper
+    const handleDelete = async (productId) => {
+        const result = await dispatch(deleteProduct(productId));
+
+        if (deleteProduct.fulfilled.match(result)) {
+            showToast({
+                title: '✅ Product Deleted',
+                description: 'Removed from the list.',
             });
 
-            if (response.status === 200) {
-                showToast({
-                    title: "Deleted Successfully !",
-                    description: "Product Has Been Deleted Successfully",
-                });
-            }
+            // ✅ No fetchProduct() if already removed from Redux state
 
-        } catch (error) {
-            const status = error?.response?.status || error?.status || "Error";
-            const message =
-                error?.response?.data?.message ||  // From backend
-                error?.message ||                 // From JS/Axios
-                "Something went wrong.";
-
-            if (status === 401) {
-                showToast(
-                    {
-                        title: "Request Denied",
-                        description: "Please try After Sometime"
-                    }
-                )
-            } else {
-                showToast({
-                    title: "Error !",
-                    description: message
-                })
-            }
-
+        } else {
+            showToast({
+                title: '❌ Delete Failed',
+                description: result.payload || 'Could not delete product.',
+                variant: 'destructive',
+            });
         }
     };
+
 
 
     return (
@@ -82,8 +69,7 @@ export default function Dropdown({productId}) {
                 open={openDialog}
                 setOpen={setOpenDialog}
                 onConfirm={() => {
-                    console.log("🧨 Delete confirmed for:", productId);
-                    deleteProduct(productId)
+                    handleDelete(productId)
                     setOpenDialog(false);
                 }}
             />

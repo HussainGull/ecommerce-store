@@ -37,3 +37,27 @@ export const addProduct = createAsyncThunk(
         }
     }
 );
+
+export const fetchProduct = createAsyncThunk(
+    'products/fetchProducts',
+    async (_, {rejectWithValue}) => {
+        try {
+            const response = await axiosClient.get('/product/get-all-products'); // Your actual endpoint
+            return response.data?.data;
+        } catch (err) {
+            return rejectWithValue(err?.response?.data?.message || 'Failed to fetch products');
+        }
+    }
+);
+
+export const deleteProduct = createAsyncThunk(
+    'products/deleteProduct',
+    async (id, {rejectWithValue}) => {
+        try {
+            await axiosClient.delete(`/product/delete-product/${id}`);
+            return id; // return the ID so slice can remove it
+        } catch (err) {
+            return rejectWithValue(err?.response?.data?.message || "Failed to delete product");
+        }
+    }
+);

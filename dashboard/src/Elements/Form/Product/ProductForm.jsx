@@ -164,7 +164,7 @@ export default function ProductForm({isDeleteEnable}) {
                 <div className="space-y-6">
 
                     <div
-                        className="w-full h-64 bg-gray-200 p-2 rounded-md flex items-center justify-center relative overflow-hidden"
+                        className="w-full h-70 bg-gray-200 p-2 rounded-md flex items-center justify-center relative overflow-hidden"
                     >
                         {imagePreviews[0] ? (
                             <img

@@ -17,7 +17,7 @@ productRouter.route('/add-product').post(upload.fields([
 );
 
 productRouter.route('/get-all-products').get(getAllProducts)
-productRouter.route('/delete-product').delete(deleteProducts)
+productRouter.route('/delete-product/:id').delete(deleteProducts)
 
 
 export {productRouter}

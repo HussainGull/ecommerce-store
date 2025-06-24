@@ -3,29 +3,19 @@ import Heading from "@/Elements/Heading/Heading.jsx";
 import RoutePathDisplay from "@/Elements/RoutePathDisplay/RouthPathDisplay.jsx";
 import {Link} from 'react-router-dom';
 import {CirclePlus} from "lucide-react";
-import React, {useEffect, useState} from "react";
-import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
+import React, {useEffect} from "react";
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
+
 
 export default function AllProducts() {
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch();
+    const productsList = useSelector((state) => state.products.list);
 
+    // ✅ Fetch products on mount
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axiosClient('/product/get-all-products');
-                setProducts(response.data.data);
-            } catch (error) {
-                console.error("❌ Error while fetching products:", error);
-            }
-        };
-
-        fetchProducts();
+        dispatch(fetchProduct());
     }, []);
-
-// // Log whenever products update
-//     useEffect(() => {
-//         console.log(products)
-//     }, [products]);
 
 
     return (
@@ -54,8 +44,8 @@ export default function AllProducts() {
             <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mt-4"
             >
-                {products.map((product) => (
-                    <ProductSummaryCard key={product.id} ProductDetails={product}/>
+                {productsList.map((product) => (
+                    <ProductSummaryCard key={product._id} ProductDetails={product}/>
                 ))}
             </div>
         </div>

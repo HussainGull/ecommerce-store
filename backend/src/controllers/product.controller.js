@@ -39,8 +39,7 @@ export const addProduct = asyncHandler(async (req, res) => {
             value === null ||
             (typeof value === "string" && value.trim() === "") ||
             (Array.isArray(value) && value.length === 0)
-        )
-        .map(([key]) => key);
+        ).map(([key]) => key);
 
     if (missingFields.length > 0) {
         throw new ApiError(400, `Missing required fields: ${missingFields.join(", ")}`);
@@ -113,7 +112,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 // Delete Products
 export const deleteProducts = asyncHandler(async (req, res) => {
-    const {id} = req.body;
+    const {id} = req.params;
 
     if (!id) {
         throw new ApiError(401, "Product Id Is Required to Delete")

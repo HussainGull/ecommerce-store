@@ -1,9 +1,11 @@
 // features/products/productsSlice.js
 import {createSlice} from '@reduxjs/toolkit';
-import {addProduct} from './productsThunks';
+import {addProduct, deleteProduct, fetchProduct} from './productsThunks';
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 
 
 const initialState = {
+    productsList: [],
     list: [],
     loading: false,
     error: null,
@@ -33,6 +35,32 @@ const productsSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload || action.error.message || 'Something went wrong';
             })
+
+            .addCase(fetchProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.list = action.payload;
+            })
+            .addCase(fetchProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(deleteProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                const deletedId = action.payload;
+                state.list = state.list.filter(product => product._id !== deletedId)
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            });
+
+
     }
 
 })
