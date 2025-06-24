@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone';
 
 export default function ImageDropzone({ setValue, watch, setImagePreviews }) {
     const onDrop = (acceptedFiles) => {
-        const existingFiles = watch("productImages") || [];
+        const existingFiles = watch("productImage") || [];
 
         const uniqueFiles = acceptedFiles.filter((newFile) => {
             return !existingFiles.some(
@@ -19,7 +19,7 @@ export default function ImageDropzone({ setValue, watch, setImagePreviews }) {
         const newPreviews = uniqueFiles.map((file) => URL.createObjectURL(file));
 
         setImagePreviews((prev) => [...prev, ...newPreviews]);
-        setValue("productImages", [...existingFiles, ...uniqueFiles], {
+        setValue("productImage", [...existingFiles, ...uniqueFiles], {
             shouldValidate: true,
         });
     };

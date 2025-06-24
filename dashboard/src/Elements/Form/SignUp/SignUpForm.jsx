@@ -7,7 +7,7 @@ import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 import {LinkButton} from "@/Elements/LinkButton/LinkButton.jsx";
 import {useDispatch, useSelector} from "react-redux";
-import {login} from "@/Features/Users/Auth/authSlice.js";
+import {login} from "@/Redux-Toolkit/Features/Users/Auth/authSlice.js";
 import {useNavigate} from "react-router-dom";
 
 

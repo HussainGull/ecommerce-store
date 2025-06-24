@@ -6,7 +6,7 @@ import {formFields} from "@/Elements/Form/Login/FormFields.js";
 import {useForm} from "react-hook-form";
 import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
-import {login} from "@/Features/Users/Auth/authSlice.js";
+import {login} from "@/Redux-Toolkit/Features/Users/Auth/authSlice.js";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router-dom";
 

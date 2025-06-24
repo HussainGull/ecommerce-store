@@ -34,12 +34,11 @@ export const addProduct = asyncHandler(async (req, res) => {
 
     // Check for missing fields
     const missingFields = Object.entries(requiredFields)
-        .filter(
-            ([_, value]) =>
-                value === undefined ||
-                value === null ||
-                (typeof value === "string" && value.trim() === "") ||
-                (Array.isArray(value) && value.length === 0)
+        .filter(([_, value]) =>
+            value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (Array.isArray(value) && value.length === 0)
         )
         .map(([key]) => key);
 
@@ -66,13 +65,10 @@ export const addProduct = asyncHandler(async (req, res) => {
     };
 
     // Step 4: Handle image upload
-    const productImagePaths = Array.isArray(req.files?.productImage)
-        ? req.files.productImage.filter(file => file?.path).map(file => file.path) : [];
+    const productImagePaths = Array.isArray(req.files?.productImage) ? req.files.productImage.filter(file => file?.path).map(file => file.path) : [];
 
     if (productImagePaths.length === 0) {
-        res.status(408)
-            .message = 'fuck you'
-        throw new ApiError(408, "Product images are required");
+        throw new ApiError(408, "Product images are required")
     }
 
     const uploadedProductImages = await Promise.all(
@@ -102,11 +98,10 @@ export const addProduct = asyncHandler(async (req, res) => {
         );
 });
 
-
-
+// Get All Products
 export const getAllProducts = asyncHandler(async (req, res) => {
     try {
-        const allProducts = await Product.find().sort({ createdAt: -1 });
+        const allProducts = await Product.find().sort({createdAt: -1});
 
         return res.status(200).json(
             new ApiResponse(200, allProducts, "Products fetched successfully!")
@@ -116,3 +111,19 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     }
 });
 
+// Delete Products
+export const deleteProducts = asyncHandler(async (req, res) => {
+    const {id} = req.body;
+
+    if (!id) {
+        throw new ApiError(401, "Product Id Is Required to Delete")
+    }
+
+    const deleteProduct = await Product.findByIdAndDelete(id.toString())
+
+    if (!deleteProduct) {
+        throw new ApiError(401, "Error While Deleting the Product")
+    }
+
+    res.status(200).json(new ApiResponse(200, deleteProduct));
+})

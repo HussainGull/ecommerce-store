@@ -22,10 +22,10 @@ export default function AllProducts() {
         fetchProducts();
     }, []);
 
-// Log whenever products update
-    useEffect(() => {
-        console.log(products)
-    }, [products]);
+// // Log whenever products update
+//     useEffect(() => {
+//         console.log(products)
+//     }, [products]);
 
 
     return (

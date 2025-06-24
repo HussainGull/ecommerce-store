@@ -1,18 +1,21 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import InputField from "@/Elements/InputField/InputField.jsx";
 import FormLabel from "@/Elements/Label/FormLabel.jsx";
 import TextArea from "@/Elements/TextArea/TextArea.jsx";
 import {Selector} from "@/Elements/Select/Selector.jsx";
 import {Controller, useForm} from 'react-hook-form';
 import {Eye, X} from 'lucide-react';
-import {showToast} from "@/Elements/Toaster/Toaster.jsx";
-import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
 import ImageDropzone from "@/Elements/DropZone/ImageDropzone.jsx";
+import {useDispatch, useSelector} from 'react-redux';
+import {addProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
 
 export default function ProductForm({isDeleteEnable}) {
     const [imagePreviews, setImagePreviews] = useState([]);
     const [desiredPreviewIndex, setDesiredPreviewIndex] = useState(0);
-
+    const dispatch = useDispatch();
+    const loading = useSelector((state) => state.products.loading);
+    const productsList = useSelector((state) => state.products.list);
+    const error = useSelector((state) => state.products.error);
 
     const {
         register,
@@ -33,7 +36,7 @@ export default function ProductForm({isDeleteEnable}) {
             regularPrice: '',
             salePrice: '',
             tags: '',
-            productImages: [],
+            productImage: [],
         },
     });
 
@@ -51,77 +54,30 @@ export default function ProductForm({isDeleteEnable}) {
 
     const removeImage = (index) => {
         const newPreviews = imagePreviews.filter((_, i) => i !== index);
-        const currentFiles = watch("productImages") || [];
+        const currentFiles = watch("productImage") || [];
         const newFiles = currentFiles.filter((_, i) => i !== index);
 
         setImagePreviews(newPreviews);
-        setValue("productImages", newFiles, {shouldValidate: true});
+        setValue("productImage", newFiles, {shouldValidate: true});
     };
 
     const previewImageChange = (index) => {
         setDesiredPreviewIndex(index);
     };
 
-    const onSubmit = async (data) => {
-        const formData = new FormData();
 
-        try {
-            // Append form data
-            Object.entries(data).forEach(([key, value]) => {
-                if (key === 'productImages') {
-                    value.forEach(file => formData.append('productImage', file)); // 🔁 append all images
-                } else if (Array.isArray(value)) {
-                    formData.append(key, value.join(',')); // 📋 serialize arrays
-                } else {
-                    formData.append(key, value); // 🧾 append scalar values
-                }
-            });
+    useEffect(() => {
+        console.log("Redux Toolkit List :", productsList)
+    }, [productsList]);
 
-            const response = await axiosClient.post('/product/add-product', formData, {
-                headers: {'Content-Type': 'multipart/form-data'},
-            });
 
-            showToast({
-                title: response.statusText,
-                description: response.data?.message,
-            });
+    const onSubmit = async (productData) => {
+        console.log("Form Data :", productData);
+        dispatch(addProduct(productData));
+        console.log(loading)
+        console.log(error)
+    }
 
-            // console.log("Response:", response);
-            reset();              // 🔄 Reset form
-            setImagePreviews([]); // 🧹 Clear previews
-
-        } catch (error) {
-            const status = error?.response?.status || error?.status || "Error";
-            const message =
-                error?.response?.data?.message ||  // From backend
-                error?.message ||                 // From JS/Axios
-                "Something went wrong.";          // Fallback
-
-            let toastTitle = `❌ ${status}`;
-            let toastDescription = message;
-
-            // 👇 Optional: More tailored handling based on status code
-            switch (status) {
-                case 400:
-                    toastTitle = "🛑 Please fill all fields";
-                    break;
-                case 408:
-                    toastTitle = "⏳ Missing Images";
-                    toastDescription = "Product images are required.";
-                    break;
-                case 500:
-                    toastTitle = "🚨 Server Error";
-                    break;
-            }
-
-            showToast({
-                title: toastTitle,
-                description: toastDescription,
-            });
-
-            console.error("Error submitting product:", error);
-        }
-    };
 
     return (
         <div className="w-full overflow-hidden p-4 sm:p-6 md:p-8 lg:p-6 bg-white shadow-lg rounded-lg mt-10">
