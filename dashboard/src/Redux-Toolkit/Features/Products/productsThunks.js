@@ -1,6 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
-import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 
 export const addProduct = createAsyncThunk(
     'products/addProduct',
@@ -25,14 +24,7 @@ export const addProduct = createAsyncThunk(
             return res.data?.data;
 
         } catch (err) {
-            const status = err.response?.status;
             const message = err?.response?.data?.message || 'Product creation failed.';
-            if (status === 408) {
-                showToast({title: "Product Image are Required", description: "Product Images are Required"})
-            } else {
-                showToast({title: "All Fields Are Required", description: "Fill all the fields."})
-
-            }
             return rejectWithValue(message);
         }
     }

@@ -8,6 +8,7 @@ import {Eye, X} from 'lucide-react';
 import ImageDropzone from "@/Elements/DropZone/ImageDropzone.jsx";
 import {useDispatch, useSelector} from 'react-redux';
 import {addProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
+import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 
 export default function ProductForm({isDeleteEnable}) {
     const [imagePreviews, setImagePreviews] = useState([]);
@@ -52,6 +53,7 @@ export default function ProductForm({isDeleteEnable}) {
         {value: "laceless", label: "Laceless"},
     ];
 
+
     const removeImage = (index) => {
         const newPreviews = imagePreviews.filter((_, i) => i !== index);
         const currentFiles = watch("productImage") || [];
@@ -66,17 +68,36 @@ export default function ProductForm({isDeleteEnable}) {
     };
 
 
-    useEffect(() => {
-        console.log("Redux Toolkit List :", productsList)
-    }, [productsList]);
-
-
     const onSubmit = async (productData) => {
-        console.log("Form Data :", productData);
-        dispatch(addProduct(productData));
-        console.log(loading)
-        console.log(error)
-    }
+        const result = await dispatch(addProduct(productData));
+
+        if (addProduct.fulfilled.match(result)) {
+            showToast({
+                title: "✅ Product Created",
+                description: "Your product has been added successfully.",
+            });
+
+            reset();               // Clear form
+            setImagePreviews([]);  // Clear image previews
+
+        } else {
+            const status = result?.error?.code || result?.error?.status || result?.meta?.response?.status;
+
+            if (status === 408) {
+                showToast({
+                    title: "⏳ Missing Images",
+                    description: "Please add at least one product image.",
+                    variant: "destructive",
+                });
+            } else {
+                showToast({
+                    title: "⚠️ Invalid Submission",
+                    description: result.payload || "Please fill all required fields.",
+                    variant: "destructive",
+                });
+            }
+        }
+    };
 
 
     return (

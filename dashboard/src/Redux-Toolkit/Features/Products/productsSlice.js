@@ -1,7 +1,6 @@
 // features/products/productsSlice.js
 import {createSlice} from '@reduxjs/toolkit';
 import {addProduct, deleteProduct, fetchProduct} from './productsThunks';
-import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 
 
 const initialState = {

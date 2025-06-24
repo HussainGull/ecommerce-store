@@ -19,82 +19,63 @@ export const addProduct = asyncHandler(async (req, res) => {
         tags,
     } = req.body;
 
-    // Step 1: Field validation
-    const requiredFields = {
+    // Step 1: Required + type-normalized fields
+    const fields = {
         productName,
         description,
         category,
         brand,
         sku,
-        stockQuantity,
-        regularPrice,
-        salePrice,
-        tags,
-    };
-
-    // Check for missing fields
-    const missingFields = Object.entries(requiredFields)
-        .filter(([_, value]) =>
-            value === undefined ||
-            value === null ||
-            (typeof value === "string" && value.trim() === "") ||
-            (Array.isArray(value) && value.length === 0)
-        ).map(([key]) => key);
-
-    if (missingFields.length > 0) {
-        throw new ApiError(400, `Missing required fields: ${missingFields.join(", ")}`);
-    }
-
-    // Step 2: Ensure numeric fields are actually numbers
-    const numberFields = ["stockQuantity", "regularPrice", "salePrice"];
-    const invalidNumberFields = numberFields.filter(
-        (field) => isNaN(Number(requiredFields[field]))
-    );
-
-    if (invalidNumberFields.length > 0) {
-        throw new ApiError(400, `Invalid number fields: ${invalidNumberFields.join(", ")}`);
-    }
-
-    // Step 3: Normalize number fields
-    const normalizedFields = {
-        ...requiredFields,
         stockQuantity: Number(stockQuantity),
         regularPrice: Number(regularPrice),
         salePrice: Number(salePrice),
+        tags,
     };
 
-    // Step 4: Handle image upload
-    const productImagePaths = Array.isArray(req.files?.productImage) ? req.files.productImage.filter(file => file?.path).map(file => file.path) : [];
+    const missingOrInvalid = Object.entries(fields).reduce((acc, [key, value]) => {
+        if (
+            value === undefined ||
+            value === null ||
+            (typeof value === "string" && value.trim() === "") ||
+            (Array.isArray(value) && value.length === 0) ||
+            (["stockQuantity", "regularPrice", "salePrice"].includes(key) && isNaN(value))
+        ) {
+            acc.push(key);
+        }
+        return acc;
+    }, []);
 
-    if (productImagePaths.length === 0) {
-        throw new ApiError(408, "Product images are required")
+    if (missingOrInvalid.length > 0) {
+        throw new ApiError(400, `Invalid or missing fields: ${missingOrInvalid.join(", ")}`);
     }
 
-    const uploadedProductImages = await Promise.all(
-        productImagePaths.map(async (localPath) => {
-            const result = await uploadOnCloudinary(localPath);
+    // Step 2: Image upload
+    const imagePaths = (req.files?.productImage || []).map(file => file?.path).filter(Boolean);
+
+    if (!imagePaths.length) {
+        throw new ApiError(408, "Product images are required.");
+    }
+
+    const uploadedUrls = await Promise.all(
+        imagePaths.map(async (path) => {
+            const result = await uploadOnCloudinary(path);
             return result?.secure_url || null;
         })
     );
 
-    const validImageUrls = uploadedProductImages.filter(Boolean);
+    const productImage = uploadedUrls.filter(Boolean);
 
-    if (validImageUrls.length === 0) {
-        throw new ApiError(400, "Cloud upload failed for all images.");
+    if (!productImage.length) {
+        throw new ApiError(400, "Image upload failed.");
     }
 
-    // Step 5: Create product
-    const product = await Product.create({
-        ...normalizedFields,
-        productImage: validImageUrls,
-    });
+    // Step 3: Create product
+    const product = await Product.create({...fields, productImage});
 
-    // Step 6: Return response
-    return res
-        .status(201)
-        .json(
-            new ApiResponse(201, product, "Product Created Successfully!")
-        );
+    // Step 4: Response
+    return res.status(201).json(
+        new ApiResponse(201, product, "Product Created Successfully!")
+    );
 });
 
 // Get All Products
