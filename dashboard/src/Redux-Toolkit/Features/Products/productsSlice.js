@@ -1,10 +1,10 @@
 // features/products/productsSlice.js
 import {createSlice} from '@reduxjs/toolkit';
-import {addProduct, deleteProduct, fetchProduct} from './productsThunks';
+import {addProduct, deleteProduct, fetchEditProduct, fetchProduct} from './productsThunks';
 
 
 const initialState = {
-    productsList: [],
+    editProductList: null,
     list: [],
     loading: false,
     error: null,
@@ -55,6 +55,17 @@ const productsSlice = createSlice({
                 state.list = state.list.filter(product => product._id !== deletedId)
             })
             .addCase(deleteProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(fetchEditProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchEditProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.editProductList = action.payload;  // ✅ Store as object not array
+            })
+            .addCase(fetchEditProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
             });

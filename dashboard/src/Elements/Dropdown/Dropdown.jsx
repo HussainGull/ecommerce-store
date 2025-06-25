@@ -39,8 +39,6 @@ export default function Dropdown({productId}) {
         }
     };
 
-
-
     return (
         <>
             <DropdownMenu>

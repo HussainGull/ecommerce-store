@@ -106,4 +106,18 @@ export const deleteProducts = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json(new ApiResponse(200, deleteProduct));
-})
+});
+
+
+export const fetchEditProduct = asyncHandler(async (req, res) => {
+    const {id} = req.params;
+
+    if (!id) {
+        throw new ApiError(401, "Edit Product Id is Required !")
+    }
+    const product = await Product.findById(id.toString())
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, product, "Edit Product Fetched Succesfully !"))
+});

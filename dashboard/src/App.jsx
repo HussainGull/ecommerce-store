@@ -14,11 +14,12 @@ import AddNewProducts from "@/Page/AddNewProducts/AddNewProducts.jsx";
 // Layout
 import HomeLayout from "@/Layout/HomeLayout/HomeLayout.jsx";
 import {Toaster} from "sonner";
+import ProductForm from "@/Elements/Form/Product/ProductForm.jsx";
 
 // Layout wrapper helper
-const wrapWithLayout = (Component, Layout) => (
+const wrapWithLayout = (Component, Layout, routeProps = {}) => (
     <Layout>
-        <Component/>
+        <Component {...routeProps} />
     </Layout>
 );
 
@@ -37,6 +38,8 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
         {path: "/order-details", component: OrderDetails},
         {path: "/product-details", component: ProductDetails},
         {path: "/add-new-product", component: AddNewProducts},
+        { path: "/edit-product/:id", component: ProductForm },  // ✅ Correct
+
     ];
 
     return (
@@ -48,8 +51,16 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
                 ))}
 
                 {/* App Pages (with layout) */}
-                {mainRoutes.map(({path, component: Component}, idx) => (
-                    <Route key={idx} path={path} element={wrapWithLayout(Component, HomeLayout)}/>
+                {mainRoutes.map(({ path, component: Component }, idx) => (
+                    <Route
+                        key={idx}
+                        path={path}
+                        element={wrapWithLayout(
+                            Component,
+                            HomeLayout,
+                            path.includes('/edit-product/') ? { mode: 'edit' } : {} // ✅ Auto-pass mode for edit route
+                        )}
+                    />
                 ))}
             </Routes>
         </>

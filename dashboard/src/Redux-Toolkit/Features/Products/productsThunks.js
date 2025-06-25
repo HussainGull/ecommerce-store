@@ -53,3 +53,13 @@ export const deleteProduct = createAsyncThunk(
         }
     }
 );
+
+export const fetchEditProduct = createAsyncThunk('products/fetchProduct', async (id, {rejectWithValue}) => {
+    try {
+        const response = await axiosClient.get(`/product/get-edit-product/${id}`);
+        return response.data?.data
+
+    } catch (err) {
+        return rejectWithValue(err?.response?.data?.message || "Failed to Fetch product");
+    }
+});
