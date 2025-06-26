@@ -16,16 +16,15 @@ export const productSchema = new Schema({
             trim: true
         },
         category: {
-            type: String,
-            required: true,
-            unique: false,
-            trim: true
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Category',
+            required:true
         },
         brand: {
-            type: String,
-            required: true,
-            unique: false,
-            trim: true
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Brand',
+            required:true
+
         },
         sku: {
             type: String,

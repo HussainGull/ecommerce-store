@@ -15,6 +15,15 @@ export const uploadOnCloudinary = async (localFilePath) => {
     } catch (error) {
         fs.unlinkSync(localFilePath)
         console.log('Cloudinary Error:', error);
+    } finally {
+        try {
+            if (fs.existsSync(localFilePath)) {
+                fs.unlinkSync(localFilePath);
+                console.log(`🧹 Temp file deleted: ${path.basename(localFilePath)}`);
+            }
+        } catch (unlinkError) {
+            console.error(`⚠️ Error deleting temp file ${localFilePath}:`, unlinkError);
+        }
     }
 }
 

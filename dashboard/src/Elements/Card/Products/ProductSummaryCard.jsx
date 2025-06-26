@@ -71,7 +71,7 @@ export default function ProductSummaryCard({ProductDetails}) {
                 </div>
                 <div>
                     <p className="font-poppins font-medium text-gray-900">Tags</p>
-                    <p className={"font-poppins"}>{ProductDetails.tags?.join(', ')}</p>
+                    <p className={"font-poppins break-words whitespace-pre-wrap"}>{ProductDetails.tags?.join(', ')}</p>
                 </div>
                 <div>
                     <p className="font-poppins font-medium text-gray-900">Regular Price</p>

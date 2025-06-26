@@ -1,7 +1,14 @@
 import {Router} from "express";
 
 import {
-    addProduct, deleteProducts, fetchEditProduct, getAllProducts,
+    addProduct,
+    createBrand,
+    createCategory,
+    deleteProducts,
+    fetchEditProduct,
+    getAllBrands, getAllCategories,
+    getAllProducts,
+    updateProduct,
 } from "../controllers/product.controller.js";
 import {upload} from "../middlewares/multer.middleware.js";
 
@@ -19,6 +26,15 @@ productRouter.route('/add-product').post(upload.fields([
 productRouter.route('/get-all-products').get(getAllProducts)
 productRouter.route('/delete-product/:id').delete(deleteProducts)
 productRouter.route('/get-edit-product/:id').get(fetchEditProduct)
+productRouter.route('/update-product/:id').patch(upload.fields([{ name: 'productImage', maxCount: 10 }]), updateProduct);
+productRouter.route('/create-category').post(createCategory)
+productRouter.route('/get-all-categories').get(getAllCategories)
+productRouter.route('/create-brand').post(createBrand)
+productRouter.route('/get-all-brands').get(getAllBrands)
+
+
+
+
 
 
 export {productRouter}

@@ -15,6 +15,8 @@ import AddNewProducts from "@/Page/AddNewProducts/AddNewProducts.jsx";
 import HomeLayout from "@/Layout/HomeLayout/HomeLayout.jsx";
 import {Toaster} from "sonner";
 import ProductForm from "@/Elements/Form/Product/ProductForm.jsx";
+import CreateCategory from "@/Page/CreateCategory/CreateCategory.jsx";
+import CreateBrand from "@/Page/CreateBrand/CreateBrand.jsx";
 
 // Layout wrapper helper
 const wrapWithLayout = (Component, Layout, routeProps = {}) => (
@@ -38,7 +40,9 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
         {path: "/order-details", component: OrderDetails},
         {path: "/product-details", component: ProductDetails},
         {path: "/add-new-product", component: AddNewProducts},
-        { path: "/edit-product/:id", component: ProductForm },  // ✅ Correct
+        { path: "/edit-product/:id", component: ProductForm },
+        { path: "/create-category", component: CreateCategory },
+        { path: "/create-brand", component: CreateBrand },
 
     ];
 

@@ -54,12 +54,90 @@ export const deleteProduct = createAsyncThunk(
     }
 );
 
-export const fetchEditProduct = createAsyncThunk('products/fetchProduct', async (id, {rejectWithValue}) => {
-    try {
-        const response = await axiosClient.get(`/product/get-edit-product/${id}`);
-        return response.data?.data
+export const fetchEditProduct = createAsyncThunk('products/fetchProduct',
+    async (id, {rejectWithValue}) => {
+        try {
+            const response = await axiosClient.get(`/product/get-edit-product/${id}`);
+            return response.data?.data
 
-    } catch (err) {
-        return rejectWithValue(err?.response?.data?.message || "Failed to Fetch product");
+        } catch (err) {
+            return rejectWithValue(err?.response?.data?.message || "Failed to Fetch product");
+        }
+    });
+
+
+export const updateProduct = createAsyncThunk(
+    'products/updateProduct',
+    async ({id, updatedData}, {rejectWithValue}) => {
+        try {
+            const formData = new FormData();
+
+            Object.entries(updatedData).forEach(([key, value]) => {
+                if (key === 'productImage' && Array.isArray(value)) {
+                    value.forEach(file => formData.append('productImage', file));
+                } else if (Array.isArray(value)) {
+                    formData.append(key, value.join(','));
+                } else {
+                    formData.append(key, value);
+                }
+            });
+
+            const response = await axiosClient.patch(`/product/update-product/${id}`, formData, {
+                headers: {'Content-Type': 'multipart/form-data'},
+            });
+            return response.data?.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to update product");
+        }
     }
-});
+);
+
+
+export const createCategory = createAsyncThunk(
+    'products/createCategory',
+    async (categoryData, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.post('/product/create-category', categoryData);  // ✅ Send JSON
+            return response.data?.data;  // ✅ Return actual category data
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Category creation failed");
+        }
+    }
+);
+
+export const createBrand = createAsyncThunk(
+    'products/createBrand',
+    async (brandData, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.post('/product/create-brand', brandData);  // ✅ Send JSON
+            return response.data?.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Brand creation failed");
+        }
+    }
+);
+
+
+export const fetchCategories = createAsyncThunk(
+    'products/fetchCategories',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.get('/product/get-all-categories');
+            return response.data?.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to fetch categories");
+        }
+    }
+);
+
+export const fetchBrands = createAsyncThunk(
+    'products/fetchBrands',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.get('/product/get-all-brands');
+            return response.data?.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || "Failed to fetch brands");
+        }
+    }
+);

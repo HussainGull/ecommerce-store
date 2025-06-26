@@ -1,11 +1,21 @@
 // features/products/productsSlice.js
 import {createSlice} from '@reduxjs/toolkit';
-import {addProduct, deleteProduct, fetchEditProduct, fetchProduct} from './productsThunks';
+import {
+    addProduct, createBrand,
+    createCategory,
+    deleteProduct, fetchBrands, fetchCategories,
+    fetchEditProduct,
+    fetchProduct,
+    updateProduct
+} from './productsThunks';
 
 
 const initialState = {
     editProductList: null,
+    updatedProduct: null,
     list: [],
+    categories: [],
+    brands: [],
     loading: false,
     error: null,
 }
@@ -68,7 +78,50 @@ const productsSlice = createSlice({
             .addCase(fetchEditProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload || action.error.message;
-            });
+            })
+            .addCase(updateProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.updatedProduct = action.payload;  // Optional: store updated product
+                console.log("Slice Data:", state.updatedProduct)
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(createCategory.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createCategory.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.categories = action.payload
+            })
+            .addCase(createCategory.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(createBrand.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createBrand.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.brands = action.payload
+            })
+            .addCase(createBrand.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || action.error.message;
+            })
+            .addCase(fetchCategories.fulfilled, (state, action) => {
+                state.categories = action.payload;
+            })
+            .addCase(fetchBrands.fulfilled, (state, action) => {
+                state.brands = action.payload;
+            })
 
 
     }

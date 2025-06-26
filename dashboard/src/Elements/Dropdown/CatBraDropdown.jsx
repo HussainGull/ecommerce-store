@@ -10,7 +10,6 @@ import {useNavigate} from "react-router-dom";
 import {DeleteAlert} from "@/Elements/Alert/DeleteAlert.jsx";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 import {useDispatch} from 'react-redux';
-import {deleteProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
 
 
 export default function Dropdown({productId}) {
@@ -19,24 +18,23 @@ export default function Dropdown({productId}) {
     const [openDialog, setOpenDialog] = useState(false);
 
 
-    const handleDelete = async (productId) => {
-        const result = await dispatch(deleteProduct(productId));
+    const handleDelete = async (id) => {
 
-        if (deleteProduct.fulfilled.match(result)) {
-            showToast({
-                title: '✅ Product Deleted',
-                description: 'Removed from the list.',
-            });
-
-            // ✅ No fetchProduct() if already removed from Redux state
-
-        } else {
-            showToast({
-                title: '❌ Delete Failed',
-                description: result.payload || 'Could not delete product.',
-                variant: 'destructive',
-            });
-        }
+        // if (deleteProduct.fulfilled.match(result)) {
+        //     showToast({
+        //         title: '✅ Product Deleted',
+        //         description: 'Removed from the list.',
+        //     });
+        //
+        //     // ✅ No fetchProduct() if already removed from Redux state
+        //
+        // } else {
+        //     showToast({
+        //         title: '❌ Delete Failed',
+        //         description: result.payload || 'Could not delete product.',
+        //         variant: 'destructive',
+        //     });
+        // }
     };
 
     return (
