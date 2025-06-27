@@ -13,10 +13,10 @@ import AddNewProducts from "@/Page/AddNewProducts/AddNewProducts.jsx";
 
 // Layout
 import HomeLayout from "@/Layout/HomeLayout/HomeLayout.jsx";
-import {Toaster} from "sonner";
 import ProductForm from "@/Elements/Form/Product/ProductForm.jsx";
 import CreateCategory from "@/Page/CreateCategory/CreateCategory.jsx";
 import CreateBrand from "@/Page/CreateBrand/CreateBrand.jsx";
+import EditEntityForm from "@/Elements/Form/Entity/EditEntityForm.jsx";
 
 // Layout wrapper helper
 const wrapWithLayout = (Component, Layout, routeProps = {}) => (
@@ -40,9 +40,11 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
         {path: "/order-details", component: OrderDetails},
         {path: "/product-details", component: ProductDetails},
         {path: "/add-new-product", component: AddNewProducts},
-        { path: "/edit-product/:id", component: ProductForm },
-        { path: "/create-category", component: CreateCategory },
-        { path: "/create-brand", component: CreateBrand },
+        {path: "/edit-product/:id", component: ProductForm},
+        {path: "/create-category", component: CreateCategory},
+        {path: "/create-brand", component: CreateBrand},
+        {path: "/edit-category/:id", component: EditEntityForm},
+        {path: "/edit-brand/:id", component: EditEntityForm},
 
     ];
 
@@ -55,14 +57,14 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
                 ))}
 
                 {/* App Pages (with layout) */}
-                {mainRoutes.map(({ path, component: Component }, idx) => (
+                {mainRoutes.map(({path, component: Component}, idx) => (
                     <Route
                         key={idx}
                         path={path}
                         element={wrapWithLayout(
                             Component,
                             HomeLayout,
-                            path.includes('/edit-product/') ? { mode: 'edit' } : {} // ✅ Auto-pass mode for edit route
+                            path.includes('/edit-product/') ? {mode: 'edit'} : {} // ✅ Auto-pass mode for edit route
                         )}
                     />
                 ))}

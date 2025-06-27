@@ -4,38 +4,46 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {MoreHorizontal, Trash2, Eye, Pencil} from "lucide-react";
+import {MoreHorizontal, Trash2, Pencil} from "lucide-react";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {DeleteAlert} from "@/Elements/Alert/DeleteAlert.jsx";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 import {useDispatch} from 'react-redux';
+import {deleteCategory} from "@/Redux-Toolkit/Features/Category/categoriesThunks.js";
+import {deleteBrand} from "@/Redux-Toolkit/Features/Brand/brandsThunks.js";
 
 
-export default function Dropdown({productId}) {
+export default function CatBraDropdown({mode, productId}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
 
 
     const handleDelete = async (id) => {
-
-        // if (deleteProduct.fulfilled.match(result)) {
-        //     showToast({
-        //         title: '✅ Product Deleted',
-        //         description: 'Removed from the list.',
-        //     });
-        //
-        //     // ✅ No fetchProduct() if already removed from Redux state
-        //
-        // } else {
-        //     showToast({
-        //         title: '❌ Delete Failed',
-        //         description: result.payload || 'Could not delete product.',
-        //         variant: 'destructive',
-        //     });
-        // }
+        try {
+            if (mode === 'brand') {
+                await dispatch(deleteBrand(id)).unwrap();  // ✅ Correct thunk for brand
+                showToast({
+                    title: '✅ Brand Deleted',
+                    description: 'Brand removed from the list.',
+                });
+            } else {
+                await dispatch(deleteCategory(id)).unwrap();  // ✅ Correct thunk for category
+                showToast({
+                    title: '✅ Category Deleted',
+                    description: 'Category removed from the list.',
+                });
+            }
+        } catch (error) {
+            showToast({
+                title: '❌ Delete Failed',
+                description: error || 'Please Try Again Later.',
+                variant: 'destructive',
+            });
+        }
     };
+
 
     return (
         <>
@@ -46,7 +54,7 @@ export default function Dropdown({productId}) {
                     </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
-                    <DropdownMenuItem onClick={() => navigate(`/edit-product/${productId}`)}>
+                    <DropdownMenuItem onClick={() => navigate(`/edit-${mode}/${productId}`)}>
                         <Pencil className="mr-2 h-4 w-4"/> Edit Product
                     </DropdownMenuItem>
                     <DropdownMenuItem

@@ -10,6 +10,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {addProduct, fetchEditProduct, updateProduct} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 import {useNavigate, useParams} from "react-router-dom";
+import {fetchCategories} from "@/Redux-Toolkit/Features/Category/categoriesThunks.js";
+import {fetchBrands} from "@/Redux-Toolkit/Features/Brand/brandsThunks.js";
 
 export default function ProductForm({isDeleteEnable, mode}) {
     const [imagePreviews, setImagePreviews] = useState([]);
@@ -17,6 +19,8 @@ export default function ProductForm({isDeleteEnable, mode}) {
     const navigate = useNavigate();
 
     const editProductDetails = useSelector((state) => state.products.editProductList);
+    const categories = useSelector((state) => state.categories.categories);
+    const brands = useSelector((state) => state.brands.brands);
     const dispatch = useDispatch();
     const {id} = useParams();
 
@@ -43,6 +47,12 @@ export default function ProductForm({isDeleteEnable, mode}) {
         watch,
     } = useForm({defaultValues});
 
+    useEffect(() => {
+        dispatch(fetchCategories());
+        dispatch(fetchBrands());
+    }, [dispatch]);
+
+
     // ✅ Fetch product for edit mode
     useEffect(() => {
         if (mode === "edit" && id) {
@@ -66,17 +76,16 @@ export default function ProductForm({isDeleteEnable, mode}) {
         }
     }, [editProductDetails, mode, setValue]);
 
-    const brandOptions = [
-        {value: "nike", label: "Nike"},
-        {value: "adidas", label: "Adidas"},
-        {value: "puma", label: "Puma"},
-        {value: "armour", label: "Armour"},
-    ];
-    const categoryOptions = [
-        {value: "cleats", label: "Cleats"},
-        {value: "grippers", label: "Grippers"},
-        {value: "laceless", label: "Laceless"},
-    ];
+    const categoryOptions = categories.map((category) => ({
+        value: category._id,     // ✅ Backend expects _id
+        label: category.name,    // ✅ User sees readable name
+    }));
+
+    const brandOptions = brands.map((brand) => ({
+        value: brand._id,        // ✅ Backend expects _id
+        label: brand.name,
+    }));
+
 
     const removeImage = (index) => {
         const newPreviews = imagePreviews.filter((_, i) => i !== index);
@@ -92,6 +101,7 @@ export default function ProductForm({isDeleteEnable, mode}) {
     };
 
     const onSubmit = async (productData) => {
+        console.log("Form Data:", productData)
         if (mode === "edit") {
             const result = await dispatch(updateProduct({id, updatedData: productData}));
             if (updateProduct.fulfilled.match(result)) {
@@ -137,7 +147,7 @@ export default function ProductForm({isDeleteEnable, mode}) {
     };
 
     const handleCancel = () => {
-        reset ();
+        reset();
         navigate("/products")
     }
 
@@ -168,10 +178,17 @@ export default function ProductForm({isDeleteEnable, mode}) {
                         <Controller
                             name="category"
                             control={control}
-                            rules={{required: 'Category is required'}}
-                            render={({field}) => <Selector placeholder="Choose Category" label="Choose Category"
-                                                           items={categoryOptions} {...field} />}
+                            rules={{ required: "Category is required" }}
+                            render={({ field }) => (
+                                <Selector
+                                    {...field}
+                                    placeholder="Choose Category"
+                                    label="Choose Category"
+                                    items={categoryOptions}
+                                />
+                            )}
                         />
+
                         {errors.category && <p className="text-red-600 text-xs">{errors.category.message}</p>}
                     </div>
 
@@ -180,9 +197,15 @@ export default function ProductForm({isDeleteEnable, mode}) {
                         <Controller
                             name="brand"
                             control={control}
-                            rules={{required: 'Brand is required'}}
-                            render={({field}) => <Selector placeholder="Choose Brand" label="Choose Brand"
-                                                           items={brandOptions} {...field} />}
+                            rules={{ required: "Brand is required" }}
+                            render={({ field }) => (
+                                <Selector
+                                    {...field}
+                                    placeholder="Choose Brand"
+                                    label="Choose Brand"
+                                    items={brandOptions}
+                                />
+                            )}
                         />
                         {errors.brand && <p className="text-red-600 text-xs">{errors.brand.message}</p>}
                     </div>

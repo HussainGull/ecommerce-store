@@ -3,8 +3,9 @@ import {useForm} from 'react-hook-form';
 import {PlusCircle, Loader2, CheckCircle, XCircle} from 'lucide-react';
 import Heading from "@/Elements/Heading/Heading.jsx";
 import RoutePathDisplay from "@/Elements/RoutePathDisplay/RouthPathDisplay.jsx";
-import {useDispatch, useSelector} from "react-redux";
-import {createBrand, createCategory} from "@/Redux-Toolkit/Features/Products/productsThunks.js";
+import {useDispatch} from "react-redux";
+import {createCategory} from "@/Redux-Toolkit/Features/Category/categoriesThunks.js";
+import {createBrand} from "@/Redux-Toolkit/Features/Brand/brandsThunks.js";
 import {showToast} from "@/Elements/Toaster/Toaster.jsx";
 
 // Reusable Form Component for both Category and Brand
@@ -40,7 +41,7 @@ export default function CreateEntityForm({entityType}) {
                     description: 'Please Try Again Creating Category',
                 });
             }
-
+            reset();
         } else {
             const result = await dispatch(createBrand(data))
             if (createBrand.fulfilled.match(result)) {
@@ -54,6 +55,7 @@ export default function CreateEntityForm({entityType}) {
                     description: 'Please Try Again Creating Brand !',
                 });
             }
+            reset();
         }
 
     }

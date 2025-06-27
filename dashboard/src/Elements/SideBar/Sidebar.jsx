@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { ChevronDown, Footprints, Box } from 'lucide-react';
-import { fetchCategories, fetchBrands } from '@/Redux-Toolkit/Features/Products/productsThunks';
-import { NavigationRoutes } from "@/Elements/Header/NavigationRoutes.jsx";
-import Dropdown from "@/Elements/Dropdown/Dropdown.jsx";
+import React, {useEffect, useState} from 'react';
+import {Link, useLocation} from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {ChevronDown,} from 'lucide-react';
+import {fetchCategories} from '@/Redux-Toolkit/Features/Category/categoriesThunks.js';
+import {fetchBrands} from '@/Redux-Toolkit/Features/Brand/brandsThunks.js';
+import {NavigationRoutes} from "@/Elements/Header/NavigationRoutes.jsx";
+import CatBraDropdown from "@/Elements/Dropdown/CatBraDropdown.jsx";
 
 export default function Sidebar() {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    const categories = useSelector((state) => state.products.categories);
-    const brands = useSelector((state) => state.products.brands);
+    const categories = useSelector((state) => state.categories.categories);
+    const brands = useSelector((state) => state.brands.brands);
 
     const [isCategoriesExpanded, setIsCategoriesExpanded] = useState(false);
     const [isBrandsExpanded, setIsBrandsExpanded] = useState(false);
@@ -36,7 +37,7 @@ export default function Sidebar() {
                     to={item.path}
                     className={`${baseClasses} ${isActive ? activeClasses : defaultClasses}`}
                 >
-                    {item.icon && <item.icon size={20} className="mr-3" />}
+                    {item.icon && <item.icon size={20} className="mr-3"/>}
                     {item.name}
                 </Link>
             </li>
@@ -44,11 +45,12 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="min-w-50 xl:w-64 h-screen bg-light hidden shadow-lg p-4 lg:flex lg:flex-col xl:flex xl:flex-col">
+        <aside
+            className="min-w-50 xl:w-64 h-screen bg-light hidden shadow-lg p-4 lg:flex lg:flex-col xl:flex xl:flex-col">
             {/* Logo */}
             <div className="mb-8 mt-4 flex self-center items-center">
-                <img src="https://placehold.co/40x40/E0E7FF/3B82F6?text=H" alt="Logo"
-                     className="h-10 w-10 mr-3 rounded-md" />
+                <img src="/src/assets/H Sports.png" alt="Logo"
+                     className="h-10 w-10 mr-3 rounded-md"/>
                 <span className="text-xl font-bold text-gray-800">H Sports</span>
             </div>
 
@@ -72,21 +74,24 @@ export default function Sidebar() {
                                         ${isParentActive && !isCategoriesExpanded ? 'bg-gray-100' : ''}`}
                                     >
                                         Categories
-                                        <ChevronDown size={20} className={`${isCategoriesExpanded ? 'rotate-180' : ''} transition-transform`} />
+                                        <ChevronDown size={20}
+                                                     className={`${isCategoriesExpanded ? 'rotate-180' : ''} transition-transform`}/>
                                     </button>
 
                                     {isCategoriesExpanded && (
                                         <ul className="ml-4 mt-2">
                                             {categories.map((cat) => (
-                                                <li key={cat._id} className="mt-1">
+                                                <li key={cat._id} className="mt-1 flex items-center justify-between">
+                                                    {/* ✅ Clicking name → Navigates */}
                                                     <Link
                                                         to={`/categories/${cat.name.toLowerCase()}`}
-                                                        className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray"
+                                                        className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray flex-grow"
                                                     >
-                                                        <Footprints size={16} className="mr-2" />
                                                         {cat.name}
-                                                        <Dropdown/>
                                                     </Link>
+
+                                                    {/* ✅ Clicking dropdown → Opens delete/edit */}
+                                                    <CatBraDropdown mode={'category'} productId={cat._id}/>
                                                 </li>
                                             ))}
                                         </ul>
@@ -106,20 +111,21 @@ export default function Sidebar() {
                                         ${isParentActive && !isBrandsExpanded ? 'bg-gray-100' : ''}`}
                                     >
                                         Brands
-                                        <ChevronDown size={20} className={`${isBrandsExpanded ? 'rotate-180' : ''} transition-transform`} />
+                                        <ChevronDown size={20}
+                                                     className={`${isBrandsExpanded ? 'rotate-180' : ''} transition-transform`}/>
                                     </button>
 
                                     {isBrandsExpanded && (
                                         <ul className="ml-4 mt-2">
                                             {brands.map((brand) => (
-                                                <li key={brand._id} className="mt-1">
+                                                <li key={brand._id} className="mt-1 flex items-center justify-between">
                                                     <Link
                                                         to={`/brands/${brand.name.toLowerCase()}`}
                                                         className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray"
                                                     >
-                                                        <Box size={16} className="mr-2" />
                                                         {brand.name}
                                                     </Link>
+                                                    <CatBraDropdown mode={'brand'} productId={brand._id}/>
                                                 </li>
                                             ))}
                                         </ul>

@@ -17,10 +17,12 @@ export const addProduct = createAsyncThunk(
                 }
             }
 
+            console.log('Before Sending TO Api:', formData)
+
             const res = await axiosClient.post('/product/add-product', formData, {
                 headers: {'Content-Type': 'multipart/form-data'},
             });
-
+            console.log("Api Response:", res.data?.data)
             return res.data?.data;
 
         } catch (err) {
@@ -93,51 +95,3 @@ export const updateProduct = createAsyncThunk(
 );
 
 
-export const createCategory = createAsyncThunk(
-    'products/createCategory',
-    async (categoryData, { rejectWithValue }) => {
-        try {
-            const response = await axiosClient.post('/product/create-category', categoryData);  // ✅ Send JSON
-            return response.data?.data;  // ✅ Return actual category data
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || "Category creation failed");
-        }
-    }
-);
-
-export const createBrand = createAsyncThunk(
-    'products/createBrand',
-    async (brandData, { rejectWithValue }) => {
-        try {
-            const response = await axiosClient.post('/product/create-brand', brandData);  // ✅ Send JSON
-            return response.data?.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || "Brand creation failed");
-        }
-    }
-);
-
-
-export const fetchCategories = createAsyncThunk(
-    'products/fetchCategories',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axiosClient.get('/product/get-all-categories');
-            return response.data?.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || "Failed to fetch categories");
-        }
-    }
-);
-
-export const fetchBrands = createAsyncThunk(
-    'products/fetchBrands',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axiosClient.get('/product/get-all-brands');
-            return response.data?.data;
-        } catch (error) {
-            return rejectWithValue(error.response?.data?.message || "Failed to fetch brands");
-        }
-    }
-);

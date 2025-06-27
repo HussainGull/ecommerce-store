@@ -8,7 +8,7 @@ import {Brand} from "../models/brand.model.js";
 import mongoose from "mongoose"; // Adjust as needed
 
 
-// Add Product
+// Add Products
 export const addProduct = asyncHandler(async (req, res) => {
     const {
         productName,
@@ -22,7 +22,7 @@ export const addProduct = asyncHandler(async (req, res) => {
         tags,
     } = req.body;
 
-    // Step 1: Required + type-normalized fields
+    // ✅ Step 1: Validate Required Fields
     const fields = {
         productName,
         description,
@@ -52,16 +52,26 @@ export const addProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, `Invalid or missing fields: ${missingOrInvalid.join(", ")}`);
     }
 
-    if (!mongoose.Types.ObjectId.isValid(category) || !(await Category.findById(category))) {
-        throw new ApiError(400, "Invalid or non-existent category ID");
+    // ✅ Step 2: Validate Category ID
+    if (!mongoose.Types.ObjectId.isValid(category)) {
+        throw new ApiError(400, "Invalid category ID format.");
+    }
+    const existingCategory = await Category.findById(category);
+    if (!existingCategory) {
+        throw new ApiError(404, "Category does not exist.");
     }
 
-    if (!mongoose.Types.ObjectId.isValid(brand) || !(await Brand.findById(brand))) {
-        throw new ApiError(400, "Invalid or non-existent brand ID");
+    // ✅ Step 3: Validate Brand ID
+    if (!mongoose.Types.ObjectId.isValid(brand)) {
+        throw new ApiError(400, "Invalid brand ID format.");
+    }
+    const existingBrand = await Brand.findById(brand);
+    if (!existingBrand) {
+        throw new ApiError(404, "Brand does not exist.");
     }
 
-    // Step 2: Image upload
-    const imagePaths = (req.files?.productImage || []).map(file => file?.path).filter(Boolean);
+    // ✅ Step 4: Upload Images
+    const imagePaths = (req.files?.productImage || []).map((file) => file?.path).filter(Boolean);
 
     if (!imagePaths.length) {
         throw new ApiError(408, "Product images are required.");
@@ -80,13 +90,14 @@ export const addProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Image upload failed.");
     }
 
-    // Step 3: Create product
-    const product = await Product.create({...fields, productImage});
+    // ✅ Step 5: Create Product
+    const product = await Product.create({
+        ...fields,
+        productImage,
+    });
 
-    // Step 4: Response
-    return res.status(201).json(
-        new ApiResponse(201, product, "Product Created Successfully!")
-    );
+    // ✅ Step 6: Send Response
+    return res.status(201).json(new ApiResponse(201, product, "Product Created Successfully!"));
 });
 
 // Get All Products
@@ -198,42 +209,4 @@ export const updateProduct = asyncHandler(async (req, res) => {
     }
 });
 
-// Create Category
-export const createCategory = asyncHandler(async (req, res) => {
-    const {name} = req.body;
 
-    const existing = await Category.findOne({name});
-    if (existing) {
-        throw new ApiError(400, "Category already exists.");
-    }
-
-    const category = await Category.create({name});
-    res
-        .status(201)
-        .json(new ApiResponse(201, category, "Category Created"));
-});
-
-// Fetch All Categories
-export const getAllCategories = asyncHandler(async (req, res) => {
-    const categories = await Category.find().select('name');
-    return res.status(200).json(new ApiResponse(200, categories, "Categories fetched successfully"));
-});
-
-// Create Brand
-export const createBrand = asyncHandler(async (req, res) => {
-    const {name} = req.body;
-
-    const existing = await Brand.findOne({name});
-    if (existing) {
-        throw new ApiError(400, "Brand already exists.");
-    }
-
-    const brand = await Brand.create({name});
-    res.status(201).json(new ApiResponse(201, brand, "Brand Created"));
-});
-
-// Fetch All Brands
-export const getAllBrands = asyncHandler(async (req, res) => {
-    const brands = await Brand.find().select('name');
-    res.status(200).json(new ApiResponse(200, brands, "All Brands Fetched"));
-});
