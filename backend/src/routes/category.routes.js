@@ -3,7 +3,7 @@ import {
     createCategory,
     deleteCategory,
     getAllCategories,
-    getCategoryById,
+    getCategoryById, getProductsByCategory,
     updateCategory
 } from "../controllers/category.controller.js";
 
@@ -24,5 +24,8 @@ categoryRouter.route('/update-category').patch(updateCategory)
 // Get Category By Id
 categoryRouter.route('/get-category/:id').get(getCategoryById);
 
+
+// Get Products By Category
+categoryRouter.route("/get-products-by-category/:id").get(getProductsByCategory);
 
 export {categoryRouter};

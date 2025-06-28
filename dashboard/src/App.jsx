@@ -17,6 +17,8 @@ import ProductForm from "@/Elements/Form/Product/ProductForm.jsx";
 import CreateCategory from "@/Page/CreateCategory/CreateCategory.jsx";
 import CreateBrand from "@/Page/CreateBrand/CreateBrand.jsx";
 import EditEntityForm from "@/Elements/Form/Entity/EditEntityForm.jsx";
+import CategoryProductsPage from "@/Page/FetchProdByCatBra/CategoryProductsPage.jsx";
+import BrandProductsPage from "@/Page/FetchProdByCatBra/BrandProductsPage.jsx";
 
 // Layout wrapper helper
 const wrapWithLayout = (Component, Layout, routeProps = {}) => (
@@ -25,7 +27,8 @@ const wrapWithLayout = (Component, Layout, routeProps = {}) => (
     </Layout>
 );
 
-export default function App() {// ✅ Routes that should NOT use HomeLayout
+export default function App() {
+    // ✅ Routes that should NOT use HomeLayout
     const authRoutes = [
         {path: "/login", component: LoginPage},
         {path: "/sign-up", component: SignUpPage},
@@ -45,7 +48,8 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
         {path: "/create-brand", component: CreateBrand},
         {path: "/edit-category/:id", component: EditEntityForm},
         {path: "/edit-brand/:id", component: EditEntityForm},
-
+        {path: "/category/:id", component: CategoryProductsPage},
+        {path: "/brand/:id", component: BrandProductsPage},
     ];
 
     return (
@@ -64,12 +68,12 @@ export default function App() {// ✅ Routes that should NOT use HomeLayout
                         element={wrapWithLayout(
                             Component,
                             HomeLayout,
-                            path.includes('/edit-product/') ? {mode: 'edit'} : {} // ✅ Auto-pass mode for edit route
+                            path.includes('/edit-product/') ? {mode: 'edit'} : {}
                         )}
                     />
                 ))}
             </Routes>
         </>
-
     );
 }
+

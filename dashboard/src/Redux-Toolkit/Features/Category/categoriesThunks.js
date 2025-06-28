@@ -69,3 +69,18 @@ export const fetchCategories = createAsyncThunk(
         }
     }
 );
+
+
+
+// Fetch Products By Categories
+export const fetchProductsByCategory = createAsyncThunk(
+    "categories/fetchByCategory",
+    async (id, { rejectWithValue }) => {
+        try {
+            const response = await axiosClient.get(`/category/get-products-by-category/${id}`);
+            return response.data?.data;
+        } catch (error) {
+            return rejectWithValue(error.response.data.message || "Failed to fetch products by category");
+        }
+    }
+);

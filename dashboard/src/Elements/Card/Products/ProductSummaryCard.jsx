@@ -25,7 +25,7 @@ export default function ProductSummaryCard({ProductDetails}) {
     };
 
     return (
-        <div className="w-full max-w-sm bg-white rounded-xl p-4 shadow-lg flex flex-col gap-6">
+        <div className="w-full h-full max-w-sm bg-white rounded-xl p-4 shadow-lg flex flex-col gap-6">
             {/* Top Section */}
             <div className="flex flex-col gap-4">
                 {/*Product Image */}

@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {Brand} from "../models/brand.model.js";
+import {Product} from "../models/product.model.js";
 
 
 // Create Brand
@@ -73,3 +74,13 @@ export const getBrandById = asyncHandler(async (req, res) => {
 });
 
 
+// Get Products By Brand
+export const getProductsByBrand = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const products = await Product.find({ brand: id })
+        .populate("category")
+        .populate("brand");
+
+    res.status(200).json(new ApiResponse(201, products, "Products By Brands !"));
+});

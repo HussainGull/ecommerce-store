@@ -84,7 +84,7 @@ export default function Sidebar() {
                                                 <li key={cat._id} className="mt-1 flex items-center justify-between">
                                                     {/* ✅ Clicking name → Navigates */}
                                                     <Link
-                                                        to={`/categories/${cat.name.toLowerCase()}`}
+                                                        to={`/category/${cat._id}`}
                                                         className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray flex-grow"
                                                     >
                                                         {cat.name}
@@ -120,8 +120,8 @@ export default function Sidebar() {
                                             {brands.map((brand) => (
                                                 <li key={brand._id} className="mt-1 flex items-center justify-between">
                                                     <Link
-                                                        to={`/brands/${brand.name.toLowerCase()}`}
-                                                        className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray"
+                                                        to={`/brand/${brand._id}`}
+                                                        className="flex items-center p-2 rounded-md hover:bg-gray-100 text-dark-gray flex-grow"
                                                     >
                                                         {brand.name}
                                                     </Link>

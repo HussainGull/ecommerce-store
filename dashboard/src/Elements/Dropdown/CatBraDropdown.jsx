@@ -55,13 +55,13 @@ export default function CatBraDropdown({mode, productId}) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
                     <DropdownMenuItem onClick={() => navigate(`/edit-${mode}/${productId}`)}>
-                        <Pencil className="mr-2 h-4 w-4"/> Edit Product
+                        <Pencil className="mr-2 h-4 w-4"/> Edit {mode}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => setOpenDialog(true)}
                         className="text-red-600 h-8"
                     >
-                        <Trash2 className="mr-2 h-4 w-4"/> Delete Product
+                        <Trash2 className="mr-2 h-4 w-4"/> Delete {mode}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

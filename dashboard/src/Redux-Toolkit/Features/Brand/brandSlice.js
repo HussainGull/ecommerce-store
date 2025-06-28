@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import {
     createBrand,
     fetchBrands,
     deleteBrand,
     updateBrand,
-    fetchBrandById,
+    fetchBrandById, fetchProductsByBrand,
 } from '@/Redux-Toolkit/Features/Brand/brandsThunks.js';
 
 const initialState = {
+    productsByBrand: [],
     brands: [],
     editBrand: null,
     loading: false,
@@ -50,6 +51,16 @@ const brandsSlice = createSlice({
 
             .addCase(fetchBrandById.fulfilled, (state, action) => {
                 state.editBrand = action.payload;
+            })
+
+            .addCase(fetchProductsByBrand.fulfilled, (state, action) => {
+                state.loading = false;
+                state.productsByBrand = action.payload;
+            })
+
+            .addCase(fetchProductsByBrand.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
     },
 });

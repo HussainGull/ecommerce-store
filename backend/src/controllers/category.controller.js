@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import {Category} from "../models/category.model.js";
+import {Product} from "../models/product.model.js";
 
 
 // Create Category
@@ -71,4 +72,15 @@ export const updateCategory = asyncHandler(async (req, res) => {
     if (!updatedCategory) throw new ApiError(404, "Category not found.");
 
     res.status(200).json(new ApiResponse(200, updatedCategory, "Category updated successfully!"));
+});
+
+// Get Products By Category
+export const getProductsByCategory = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const products = await Product.find({ category: id })
+        .populate("category")
+        .populate("brand");
+
+    res.status(200).json(new ApiResponse(201, products, "Products By Category !"));
 });

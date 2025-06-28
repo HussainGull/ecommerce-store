@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 import {
     createCategory,
     fetchCategories,
     deleteCategory,
     updateCategory,
-    fetchCategoryById,
+    fetchCategoryById, fetchProductsByCategory,
 } from './categoriesThunks.js';
 
 const initialState = {
+    productsByCategory: [],
     categories: [],
     editCategory: null,
     loading: false,
@@ -50,7 +51,17 @@ const categoriesSlice = createSlice({
 
             .addCase(fetchCategoryById.fulfilled, (state, action) => {
                 state.editCategory = action.payload;
+            })
+
+            .addCase(fetchProductsByCategory.fulfilled, (state, action) => {
+                state.loading = false;
+                state.productsByCategory = action.payload;
+            })
+            .addCase(fetchProductsByCategory.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
             });
+
     },
 });
 

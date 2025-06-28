@@ -1,4 +1,4 @@
-import {createAsyncThunk} from "@reduxjs/toolkit";
+ import {createAsyncThunk} from "@reduxjs/toolkit";
 import axiosClient from "@/Elements/AxiosClient/AxiosClient.js";
 
 
@@ -70,3 +70,17 @@ export const fetchBrandById = createAsyncThunk(
         }
     }
 );
+
+
+ // 👉 Fetch Products By Brand
+ export const fetchProductsByBrand = createAsyncThunk(
+     "products/fetchByBrand",
+     async (id, { rejectWithValue }) => {
+         try {
+             const response = await axiosClient.get(`/brand/get-products-by-brand/${id}`);
+             return response.data?.data;
+         } catch (error) {
+             return rejectWithValue(error.response.data.message || "Failed to fetch products by brand");
+         }
+     }
+ );
