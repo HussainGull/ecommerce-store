@@ -19,6 +19,8 @@ import CreateBrand from "@/Page/CreateBrand/CreateBrand.jsx";
 import EditEntityForm from "@/Elements/Form/Entity/EditEntityForm.jsx";
 import CategoryProductsPage from "@/Page/FetchProdByCatBra/CategoryProductsPage.jsx";
 import BrandProductsPage from "@/Page/FetchProdByCatBra/BrandProductsPage.jsx";
+import SliderForm from "@/Elements/Form/Slider/SliderForm.jsx";
+import Sliders from "@/Page/Sliders/Sliders.jsx";
 
 // Layout wrapper helper
 const wrapWithLayout = (Component, Layout, routeProps = {}) => (
@@ -50,6 +52,9 @@ export default function App() {
         {path: "/edit-brand/:id", component: EditEntityForm},
         {path: "/category/:id", component: CategoryProductsPage},
         {path: "/brand/:id", component: BrandProductsPage},
+        {path: "/add-slider", component: SliderForm},
+        {path: "/edit-slider/:id", component: SliderForm},
+        {path: "/sliders", component: Sliders},
     ];
 
     return (

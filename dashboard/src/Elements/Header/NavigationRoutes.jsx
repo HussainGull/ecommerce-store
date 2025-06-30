@@ -12,6 +12,7 @@ import {
     Layers, CirclePlus,             // Leather Boots
 } from 'lucide-react';
 import React from "react";
+import Sidebar from "@/Elements/SideBar/Sidebar.jsx";
 
 export const NavigationRoutes = [
     {name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard},
@@ -19,6 +20,7 @@ export const NavigationRoutes = [
     {name: 'Add Category', path: '/create-category', icon: CirclePlus},
     {name: 'Add Brand', path: '/create-brand', icon: CirclePlus},
     {name: 'Order List', path: '/order-list', icon: ListChecks},
+    {name: 'Slider', path: '/sliders', icon: CirclePlus},
     {
         name: 'Categories',
         path: '/categories',
