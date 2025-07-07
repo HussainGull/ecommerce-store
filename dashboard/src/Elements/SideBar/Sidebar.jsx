@@ -79,7 +79,7 @@ export default function Sidebar() {
                                     </button>
 
                                     {isCategoriesExpanded && (
-                                        <ul className="ml-4 mt-2">
+                                        <ul className="ml-4 mt-2 h-30 overflow-y-auto">
                                             {categories.map((cat) => (
                                                 <li key={cat._id} className="mt-1 flex items-center justify-between">
                                                     {/* ✅ Clicking name → Navigates */}
@@ -116,7 +116,7 @@ export default function Sidebar() {
                                     </button>
 
                                     {isBrandsExpanded && (
-                                        <ul className="ml-4 mt-2">
+                                        <ul className="ml-4 mt-2 h-30 overflow-y-auto">
                                             {brands.map((brand) => (
                                                 <li key={brand._id} className="mt-1 flex items-center justify-between">
                                                     <Link

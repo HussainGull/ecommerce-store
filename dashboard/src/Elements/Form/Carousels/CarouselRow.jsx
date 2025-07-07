@@ -2,25 +2,22 @@ import React, {useState} from 'react';
 import {Edit, Trash2, ExternalLink} from 'lucide-react';
 import {DeleteAlert} from "@/Elements/Alert/DeleteAlert.jsx";
 
-const SliderRow = ({sliderData, onEdit, onDelete}) => {
-    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+const CarouselRow = ({carousel, onEdit, onDelete}) => {
 
-    const handleDeleteClick = () => {
-        setOpenDeleteDialog(true);
-    };
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
     const handleConfirmDelete = () => {
-        onDelete(sliderData._id);
-        setOpenDeleteDialog(false);
-    };
+        onDelete(carousel._id)
+        setOpenDeleteDialog(false)
+    }
 
     return (
         <tr className="hover:bg-gray-50 transition-colors">
             <td className="px-6 py-4">
                 <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100">
                     <img
-                        src={sliderData.sliderImage}
-                        alt={sliderData.heading}
+                        src={carousel.imageUrl}
+                        alt={carousel.title}
                         className="w-full h-full object-cover"
                     />
                 </div>
@@ -28,53 +25,49 @@ const SliderRow = ({sliderData, onEdit, onDelete}) => {
 
             <td className="px-6 py-4">
                 <div className="max-w-xs">
-                    <h4 className="font-medium text-gray-900 truncate">{sliderData.heading}</h4>
+                    <h4 className="font-medium text-gray-900 truncate">{carousel.title}</h4>
                 </div>
             </td>
 
             <td className="px-6 py-4">
                 <div className="max-w-sm">
-                    <p className="text-sm text-gray-600 line-clamp-2">{sliderData.paragraph}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2">{carousel.subtitle}</p>
                 </div>
             </td>
 
             <td className="px-6 py-4">
                 <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-blue-600">{sliderData.ctaText}</span>
+                    <span className="text-sm font-medium text-blue-600">{carousel.link}</span>
                     <ExternalLink size={14} className="text-gray-400"/>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">{sliderData.ctaLink}</p>
+                <p className="text-xs text-gray-500 mt-1">{carousel.link}</p>
             </td>
 
             <td className="px-6 py-4">
                 <div className="flex items-center gap-2">
                     <button
-                        onClick={() => onEdit(sliderData._id)}
+                        onClick={() => onEdit(carousel._id)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Edit slider"
+                        title="Edit carousel"
                     >
                         <Edit size={16}/>
                     </button>
-
                     <button
-                        onClick={handleDeleteClick}
+                        onClick={() => setOpenDeleteDialog(true)}
                         className="p-2 text-red hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete slider"
+                        title="Delete carousel"
                     >
                         <Trash2 size={16}/>
                     </button>
-
-                    {/* ✅ Delete Confirmation Dialog */}
                     <DeleteAlert
                         open={openDeleteDialog}
                         setOpen={setOpenDeleteDialog}
                         onConfirm={handleConfirmDelete}
                     />
-
                 </div>
             </td>
         </tr>
     );
 };
 
-export default SliderRow;
+export default CarouselRow;

@@ -31,6 +31,7 @@ import {productRouter} from "./routes/product.routes.js";
 import {categoryRouter} from "./routes/category.routes.js";
 import {brandRouter} from "./routes/brand.routes.js";
 import sliderRouter from "./routes/slider.routes.js";
+import carouselRouter from "./routes/carousel.routes.js";
 
 // Routes Declaration
 app.use("/api/v1/users", userRouter);
@@ -38,6 +39,7 @@ app.use("/api/v1/product", productRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/brand", brandRouter);
 app.use("/api/v1/slider", sliderRouter);
+app.use("/api/v1/carousel", carouselRouter);
 
 
 export {app};

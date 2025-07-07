@@ -2,9 +2,9 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export default function ImageDropzone({ setValue, watch, setImagePreviews }) {
+export default function CarouselDropzone({ setValue, watch, setImagePreviews }) {
     const onDrop = (acceptedFiles) => {
-        const existingFiles = watch("productImage") || [];
+        const existingFiles = watch("carouselImage") || [];
 
         const uniqueFiles = acceptedFiles.filter((newFile) => {
             return !existingFiles.some(
@@ -19,7 +19,7 @@ export default function ImageDropzone({ setValue, watch, setImagePreviews }) {
         const newPreviews = uniqueFiles.map((file) => URL.createObjectURL(file));
 
         setImagePreviews((prev) => [...prev, ...newPreviews]);
-        setValue("productImage", [...existingFiles, ...uniqueFiles], {
+        setValue("carouselImage", [...existingFiles, ...uniqueFiles], {
             shouldValidate: true,
         });
     };

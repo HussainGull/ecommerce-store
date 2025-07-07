@@ -18,12 +18,12 @@ export const productSchema = new Schema({
         category: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
-            required:true
+            required: true
         },
         brand: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Brand',
-            required:true
+            required: true
 
         },
         sku: {
@@ -55,10 +55,20 @@ export const productSchema = new Schema({
             type: [String],
             required: true,
             validate: [arr => arr.length > 0, 'At least one image is required']
-        }
+        },
+        rating: {
+            type: Number,
+            default: 0,
+            min: 0,
+            max: 5
+        },
+        reviews: [{
+            type: String,
+            trim: true
+        }]
 
     }, {
-        timestamps: true
+        timestamps: true,
     }
 );
 

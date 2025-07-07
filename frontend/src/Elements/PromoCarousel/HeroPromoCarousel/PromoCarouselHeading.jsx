@@ -3,7 +3,7 @@ import React from "react";
 import {Link} from "react-router-dom";
 
 export default function PromoCarouselHeading(
-    {title, subtitle, routerPath}
+    {title, subtitle, routerPath, ctaText }
 ) {
     return (
         <>
@@ -22,7 +22,7 @@ export default function PromoCarouselHeading(
                 to={routerPath}
                 className="flex items-center gap-1 xs:gap-1.5 sm:gap-2 text-base xs:text-lg sm:text-xl md:text-2xl font-medium underline hover:text-gray-300 transition-colors duration-300"
             >
-                Shop Now <ArrowRight size={20} className="xs:w-5 xs:h-5 sm:w-6 sm:h-6" />
+                {ctaText} <ArrowRight size={20} className="xs:w-5 xs:h-5 sm:w-6 sm:h-6" />
             </Link>
         </>
 

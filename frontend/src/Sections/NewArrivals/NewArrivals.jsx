@@ -1,6 +1,4 @@
 import React from "react";
-import {OurProductsData} from "@/Sections/OurProducts/OurProductsData.jsx";
-import Product from "@/Elements/Product/Product.jsx";
 import ArrivalsCarousel from "@/Elements/PromoCarousel/ArrivalsCarousel.jsx";
 import SectionHeading from "@/Elements/Headings/SectionHeading.jsx";
 

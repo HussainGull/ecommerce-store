@@ -21,6 +21,8 @@ import CategoryProductsPage from "@/Page/FetchProdByCatBra/CategoryProductsPage.
 import BrandProductsPage from "@/Page/FetchProdByCatBra/BrandProductsPage.jsx";
 import SliderForm from "@/Elements/Form/Slider/SliderForm.jsx";
 import Sliders from "@/Page/Sliders/Sliders.jsx";
+import Carousels from "@/Page/Carousel/Carousels.jsx";
+import CarouselForm from "@/Elements/Form/Carousels/CarouselForm.jsx";
 
 // Layout wrapper helper
 const wrapWithLayout = (Component, Layout, routeProps = {}) => (
@@ -55,6 +57,10 @@ export default function App() {
         {path: "/add-slider", component: SliderForm},
         {path: "/edit-slider/:id", component: SliderForm},
         {path: "/sliders", component: Sliders},
+        {path: "/carousels", component: Carousels},
+        {path: "/add-carousel", component: CarouselForm},
+        {path: "/edit-carousel/:id", component: CarouselForm},
+
     ];
 
     return (

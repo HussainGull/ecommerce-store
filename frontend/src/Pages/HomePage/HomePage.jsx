@@ -1,6 +1,5 @@
 import FlashSales from "@/Sections/FlashSales/FlashSales.jsx";
 import Categories from "@/Sections/Categories/Categories.jsx";
-import BestSelling from "@/Sections/BestSelling/BestSelling.jsx";
 import OurProducts from "@/Sections/OurProducts/OurProducts.jsx";
 import NewArrivals from "@/Sections/NewArrivals/NewArrivals.jsx";
 import FeaturesSection from "@/Sections/FeaturesSection/FeaturesSection.jsx";
@@ -13,10 +12,7 @@ export default function HomePage() {
             <HeroSection/>
             <FlashSales/>
             <Categories/>
-            <BestSelling/>
-            <HomePageImage
-                ImgPath={"/src/assets/homepage.jpg"}
-            />
+            <HomePageImage/>
             <OurProducts/>
             <NewArrivals/>
             <FeaturesSection/>

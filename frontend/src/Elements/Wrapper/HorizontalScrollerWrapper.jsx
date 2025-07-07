@@ -6,9 +6,9 @@ const HorizontalScrollerWrapper = React.forwardRef(
         return (
             <div
                 ref={ref}
-                className={`relative -mx-4 sm:-mx-6 md:-mx-8 lg:-mx-16 overflow-x-auto scrollbar-hide scroll-smooth pb-4 max-[450px]:mt-0 ${marginTop}`}
+                className={`relative -mx-4 sm:-mx-6 md:-mx-8 lg:-mx-16 overflow-x-auto scroll-smooth pb-4 max-[450px]:mt-0 ${marginTop} no-scrollbar`}
             >
-                <div className={`flex ${gap} ${paddingX} custom-scrollbar-hide`}>
+                <div className={`flex ${gap} ${paddingX}`}>
                     {children}
                 </div>
             </div>

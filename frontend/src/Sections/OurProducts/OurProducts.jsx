@@ -1,11 +1,21 @@
-import React from "react";
-import {OurProductsData} from "@/Sections/OurProducts/OurProductsData.jsx";
+import React, {useEffect} from "react";
 import Product from "@/Elements/Product/Product.jsx";
 import SectionHeading from "@/Elements/Headings/SectionHeading.jsx";
 import {ProductsWrapper} from "@/Elements/Wrapper/ProductsWrapper.jsx";
 import RedColorButton from "@/Elements/Buttons/RedColorButton.jsx";
+import {fetchShuffledProducts} from "@/Redux-ToolKit/Features/Products/productsThunks.js";
+import {useDispatch, useSelector} from "react-redux";
 
 export default function OurProducts() {
+    const shuffledProducts = useSelector((state) => state.product.shuffledProducts);
+    const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        dispatch(fetchShuffledProducts())
+    }, []);
+
+
     return (
         <section title={'categories'} className={'mt-17.5'}>
 
@@ -14,12 +24,11 @@ export default function OurProducts() {
                     IconHeading={'Our Products'}
                     SectionHeading={'Explore Our Products'}
                 />
-
             </div>
 
             <ProductsWrapper>
-                {OurProductsData.map((product) => (
-                    <Product key={product.id} product={product} showDiscountTag={false}/>
+                {shuffledProducts.slice(0, 8).map((product) => (
+                    <Product key={product._id} product={product} showDiscountTag={false}/>
                 ))}
             </ProductsWrapper>
 

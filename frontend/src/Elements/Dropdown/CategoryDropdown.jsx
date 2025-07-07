@@ -17,15 +17,15 @@ export default function CategoryDropdown() {
         dispatch(fetchCategories())
     }, []);
 
-    useEffect(() => {
-        console.log(categories)
-    }, [categories]);
+    // useEffect(() => {
+    //     console.log(categories)
+    // }, [categories]);
 
     return (
         <div className="w-[260px] h-[390px] gap-4 items-stretch overflow-y-auto custom-scrollbar-hide hidden xl:flex">
             <Accordion
                 type="single"
-                className="w-full  pt-10"
+                className="w-full pt-10"
                 defaultValue="item-1"
             >
                 {categories.map((item) => (
@@ -34,7 +34,7 @@ export default function CategoryDropdown() {
                         className={"border-none gap-4"}>
                         <AccordionTrigger
                             onClick={() => console.log(item._id)}
-                            className={"font-poppins font-normal text-base "}>
+                            className={"font-poppins font-normal text-base !cursor-pointer"}>
                             {item.name}
                         </AccordionTrigger>
                     </AccordionItem>

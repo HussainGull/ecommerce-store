@@ -21,6 +21,7 @@ export const NavigationRoutes = [
     {name: 'Add Brand', path: '/create-brand', icon: CirclePlus},
     {name: 'Order List', path: '/order-list', icon: ListChecks},
     {name: 'Slider', path: '/sliders', icon: CirclePlus},
+    {name: 'Carousel', path: '/carousels', icon: CirclePlus},
     {
         name: 'Categories',
         path: '/categories',

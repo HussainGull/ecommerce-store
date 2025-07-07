@@ -210,3 +210,26 @@ export const updateProduct = asyncHandler(async (req, res) => {
 });
 
 
+export const createProductsBulk = asyncHandler(async (req, res) => {
+    if (!Array.isArray(req.body) || req.body.length === 0) {
+        res.status(400);
+        throw new Error('Request body must be a non-empty array of products');
+    }
+
+    const products = await Product.insertMany(req.body, {ordered: false});
+
+    res.status(201).json(new ApiResponse(201, products, 'Products created successfully!'));
+});
+
+
+export const getShuffledProducts = async (req, res) => {
+    try {
+        const shuffledProducts = await Product.aggregate([{$sample: {size: 30}}]); // Shuffle 30 products
+        res
+            .status(200)
+            .json(new ApiResponse(200, shuffledProducts, "Shuffled products fetched successfully!"));
+
+    } catch (error) {
+        throw new ApiError(500, "Internal server error while fetching shuffled products");
+    }
+};
